@@ -1,5 +1,5 @@
 package com.osg.core.ui.di
 
-fun interface AnimationDataFetcher {
+fun interface AnimationContentLoader {
     suspend fun fetchAnimationByPath(path: String): ByteArray
 }

@@ -3,13 +3,13 @@ package com.osg.core.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
-import com.osg.core.ui.di.AnimationDataFetcher
+import com.osg.core.ui.di.AnimationContentLoader
 import com.osg.core.ui.di.AppLinkProvider
 import com.osg.core.ui.di.SignInProviderFactory
 import com.osg.core.ui.graph.AppGraph
 import com.osg.core.ui.theme.TrueTheme
 import com.osg.core.ui.di.AnimationMetadataRepository
-import com.osg.core.ui.di.SubmitReportHandler
+import com.osg.core.ui.di.ReportSubmissionService
 import com.osg.core.ui.di.UserRepository
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
@@ -21,8 +21,8 @@ import org.koin.dsl.module
 class BaseApp(
     metadataRepository: Scope.(ParametersHolder) -> AnimationMetadataRepository,
     userRepository: Scope.(ParametersHolder) -> UserRepository,
-    dataFetcher: Scope.(ParametersHolder) -> AnimationDataFetcher,
-    reportHandlerLoader: Scope.(ParametersHolder) -> SubmitReportHandler,
+    dataFetcher: Scope.(ParametersHolder) -> AnimationContentLoader,
+    reportHandlerLoader: Scope.(ParametersHolder) -> ReportSubmissionService,
     signInLoader: () -> SignInProviderFactory,
     baseUrl: String,
 ) {
@@ -31,13 +31,13 @@ class BaseApp(
             single<AnimationMetadataRepository>(
                 definition = metadataRepository
             )
-            single<AnimationDataFetcher>(
+            single<AnimationContentLoader>(
                 definition = dataFetcher
             )
             single<UserRepository>(
                 definition = userRepository
             )
-            single<SubmitReportHandler>(
+            single<ReportSubmissionService>(
                 definition = reportHandlerLoader
             )
             single<AppLinkProvider> { AppLinkProvider(baseUrl) }

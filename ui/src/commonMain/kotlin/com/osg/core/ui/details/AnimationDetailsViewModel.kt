@@ -2,12 +2,12 @@ package com.osg.core.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.core.ui.di.AnimationDataFetcher
+import com.osg.core.ui.di.AnimationContentLoader
 import com.osg.core.ui.di.AnimationMetadataRepository
 import com.osg.core.ui.file.fileService
 import com.osg.core.ui.home.domain.AnimationUiData
 import com.osg.core.ui.components.lottie.AnimationDataState
-import com.osg.core.ui.di.UserProfileStates
+import com.osg.core.ui.di.UserSessionState
 import com.osg.core.ui.di.UserRepository
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
@@ -20,7 +20,7 @@ data class DetailsUiPane(
     val animationState: AnimationDataState,
     val metadata: AnimationMetadata,
     val animationStats: AnimationStats,
-    val signInState: UserProfileStates,
+    val signInState: UserSessionState,
     val isLiked: Boolean = false,
 )
 sealed interface DetailsScreenStates {
@@ -35,7 +35,7 @@ sealed interface DetailsScreenStates {
 class AnimationDetailsViewModel(
     private val animationHash: String,
 ): ViewModel(), KoinComponent {
-    private val dataFetcher: AnimationDataFetcher by inject()
+    private val dataFetcher: AnimationContentLoader by inject()
     private val metaFetcher: AnimationMetadataRepository by inject()
     private val userRepository: UserRepository by inject()
     private val metaState : Flow<AnimationUiData>  = flow {
@@ -62,8 +62,8 @@ class AnimationDetailsViewModel(
             signInState = loggedState,
             animationStats = stats,
             isLiked = when (loggedState) {
-                is UserProfileStates.SignedIn -> loggedState.favorites.contains(meta.metadata.hash)
-                UserProfileStates.SignedOut -> false
+                is UserSessionState.SignedIn -> loggedState.favorites.contains(meta.metadata.hash)
+                UserSessionState.SignedOut -> false
             }
         )
         val relatedAnimations =  metaFetcher.fetchRelatedAnimations(

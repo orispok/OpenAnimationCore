@@ -1,7 +1,7 @@
 package com.osg.core.ui.home.model
 
 import com.osg.core.di.data.FilterQueryType
-import com.osg.core.ui.di.AnimationDataFetcher
+import com.osg.core.ui.di.AnimationContentLoader
 import com.osg.core.di.data.SelectedQueryType
 import com.osg.core.ui.home.domain.AnimationUiData
 import com.osg.core.ui.components.lottie.AnimationDataState
@@ -49,7 +49,7 @@ fun freeTextComparator(
 }
 
 fun List<AnimationMetadata>.toUiDataList(
-    animationRepository: AnimationDataFetcher
+    animationRepository: AnimationContentLoader
 ): List<AnimationUiData> {
     if (isEmpty()) return emptyList()
     return map {

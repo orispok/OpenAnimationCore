@@ -3,7 +3,7 @@ package com.osg.core.ui.home.domain
 import com.osg.core.di.data.SelectedQueryType
 
 sealed interface ExploreScreenStates{
-    data class GridData(
+    data class Success(
         val animations: List<AnimationUiData>,
         val selected: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore,
         val categories: List<SelectedQueryType.Tag>

@@ -24,7 +24,7 @@ import com.osg.core.ui.util.adaptive.screenWidthClass
 
 @Composable
 fun AnimationGrid(
-    screenData: ExploreScreenStates.GridData,
+    screenData: ExploreScreenStates.Success,
     onDestination: (Destination) -> Unit,
     modifier: Modifier = Modifier
 ) {

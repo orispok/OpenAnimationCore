@@ -25,7 +25,7 @@ import com.osg.core.ui.home.domain.AnimationUiData
 import com.osg.core.ui.util.icons.Download
 import com.osg.core.ui.util.icons.Link
 import com.osg.core.ui.components.signin.SignInReasoningDialog
-import com.osg.core.ui.di.UserProfileStates
+import com.osg.core.ui.di.UserSessionState
 import com.osg.core.ui.util.adaptive.isCompact
 import com.osg.core.ui.util.adaptive.pxToDp
 import com.osg.core.ui.util.link.createClipEntryWithPlainText
@@ -95,7 +95,7 @@ fun AnimationDetailsView(
         }
 
         LaunchedEffect(detailsUiState.signInState) {
-            if (detailsUiState.signInState is UserProfileStates.SignedIn) {
+            if (detailsUiState.signInState is UserSessionState.SignedIn) {
                 openSignInDialog = false
             }
         }
@@ -113,14 +113,14 @@ fun AnimationDetailsView(
             isLiked = detailsUiState.isLiked,
             animationMetadata = detailsUiState.metadata,
             onLikeClick = {
-                if (detailsUiState.signInState is UserProfileStates.SignedOut) {
+                if (detailsUiState.signInState is UserSessionState.SignedOut) {
                     openSignInDialog = true
                 } else {
                     onLikeClick(detailsUiState.isLiked.not())
                 }
             },
             onDownloadClick = {
-                if (detailsUiState.signInState is UserProfileStates.SignedOut) {
+                if (detailsUiState.signInState is UserSessionState.SignedOut) {
                     openSignInDialog = true
                 } else {
                     onDownloadClick(detailsUiState.metadata)

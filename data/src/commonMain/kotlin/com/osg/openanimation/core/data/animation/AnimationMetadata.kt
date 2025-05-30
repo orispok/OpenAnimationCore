@@ -17,8 +17,3 @@ data class AnimationMetadata(
     val category: AnimationCategory = AnimationCategory.UNKNOWN,
     val tags: Set<String> = emptySet(),
 )
-@Serializable
-data class StorageInfo(
-    val count: Int,
-    val animations: List<AnimationMetadata>
-)

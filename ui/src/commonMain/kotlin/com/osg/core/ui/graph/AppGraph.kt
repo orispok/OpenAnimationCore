@@ -32,7 +32,7 @@ import com.osg.core.ui.home.domain.ExploreScreenStates
 import com.osg.core.ui.home.model.AnimationViewModel
 import com.osg.core.ui.components.bar.SearchAnimationBar
 import com.osg.core.ui.components.signin.SignInReasoningDialogView
-import com.osg.core.ui.di.UserProfileStates
+import com.osg.core.ui.di.UserSessionState
 import com.osg.core.ui.di.UserRepository
 import kotlinx.coroutines.flow.asFlow
 import org.koin.compose.koinInject
@@ -65,7 +65,7 @@ fun AppGraph(
                 val userRepository = koinInject<UserRepository>()
                 val animationRepo = koinInject<AnimationMetadataRepository>()
                 val animationCatalogState by (animationRepo::fetchTags.asFlow()).collectAsState(emptySet())
-                val userProfileStates by userRepository.profileFlow.collectAsState(UserProfileStates.SignedOut)
+                val userSessionState by userRepository.profileFlow.collectAsState(UserSessionState.SignedOut)
                 SearchAnimationBar(
                     onSearchItemSelected = {
                         navController.navigate(
@@ -75,7 +75,7 @@ fun AppGraph(
                     categories = animationCatalogState.map(SelectedQueryType::Tag),
                     modifier = Modifier,
                     topAppBarScrollBehavior = scrollBehavior,
-                    userProfileStates = userProfileStates,
+                    userSessionState = userSessionState,
                     onSignOutClick = userRepository::onUserSignOut,
                 )
             },
@@ -95,7 +95,7 @@ fun AppGraph(
                     }
                     val uiState by mainViewModel.uiState.collectAsState()
                     when(val uiData = uiState){
-                        is ExploreScreenStates.GridData -> {
+                        is ExploreScreenStates.Success -> {
                             AnimationGrid(
                                 modifier = Modifier,
                                 screenData = uiData,

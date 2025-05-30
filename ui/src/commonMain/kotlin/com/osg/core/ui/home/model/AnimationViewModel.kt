@@ -3,11 +3,11 @@ package com.osg.core.ui.home.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.core.di.data.GuestQueryType
-import com.osg.core.ui.di.AnimationDataFetcher
+import com.osg.core.ui.di.AnimationContentLoader
 import com.osg.core.di.data.SelectedQueryType
 import com.osg.core.ui.di.AnimationMetadataRepository
 import com.osg.core.ui.home.domain.ExploreScreenStates
-import com.osg.core.ui.di.UserProfileStates
+import com.osg.core.ui.di.UserSessionState
 import com.osg.core.ui.di.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -22,13 +22,13 @@ class AnimationViewModel(
     initialQueryType: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore
 ) : ViewModel(), KoinComponent {
     private val animationMetaRepo: AnimationMetadataRepository by inject()
-    private val animationDataFetcher: AnimationDataFetcher by inject()
+    private val animationContentLoader: AnimationContentLoader by inject()
     private val userRepository: UserRepository by inject()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<ExploreScreenStates> = userRepository.profileFlow.mapLatest {
         resolveUiState(
-            userProfileStates = it,
+            userSessionState = it,
             queryType = initialQueryType
         )
     }.stateIn(
@@ -40,13 +40,13 @@ class AnimationViewModel(
 
 
     internal suspend fun resolveUiState(
-        userProfileStates: UserProfileStates,
+        userSessionState: UserSessionState,
         queryType: SelectedQueryType,
     ): ExploreScreenStates {
         return when (queryType) {
             is GuestQueryType -> {
-                val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE).toUiDataList(animationDataFetcher)
-                return ExploreScreenStates.GridData(
+                val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE).toUiDataList(animationContentLoader)
+                return ExploreScreenStates.Success(
                     animations = animations,
                     selected = queryType,
                     categories = animationMetaRepo.fetchTags().map {
@@ -55,11 +55,11 @@ class AnimationViewModel(
                 )
             }
             is SelectedQueryType.ExploreCategory.Liked -> {
-                if (userProfileStates is UserProfileStates.SignedIn) {
-                    val animations = userProfileStates.favorites
+                if (userSessionState is UserSessionState.SignedIn) {
+                    val animations = userSessionState.favorites
                         .map { animationMetaRepo.fetchMetaByHash(it) }
-                        .toUiDataList(animationDataFetcher)
-                    return ExploreScreenStates.GridData(
+                        .toUiDataList(animationContentLoader)
+                    return ExploreScreenStates.Success(
                         animations = animations,
                         selected = queryType,
                         categories = animationMetaRepo.fetchTags().map {

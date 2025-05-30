@@ -2,7 +2,7 @@ package com.osg.core.ui.components.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.core.ui.di.SubmitReportHandler
+import com.osg.core.ui.di.ReportSubmissionService
 import com.osg.openanimation.core.data.report.ReportSubmission
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ sealed interface ReportUiState {
 }
 
 class ReportViewModel: ViewModel(), KoinComponent {
-    val reportHandler by inject<SubmitReportHandler>()
+    val reportHandler by inject<ReportSubmissionService>()
     val uiState = MutableStateFlow<ReportUiState>(ReportUiState.Initial)
     fun submitReport(reportSubmission: ReportSubmission){
         uiState.value = ReportUiState.SubmitProcess.Sending

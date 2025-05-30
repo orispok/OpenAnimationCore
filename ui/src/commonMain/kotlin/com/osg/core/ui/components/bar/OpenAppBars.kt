@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.osg.core.ui.components.signin.SignInReasoningDialog
 
 import com.osg.core.di.data.SelectedQueryType
-import com.osg.core.ui.di.UserProfileStates
+import com.osg.core.ui.di.UserSessionState
 import com.osg.core.ui.util.icons.Logout
 import com.osg.core.ui.util.icons.Tag
 import com.osg.core.ui.util.icons.brandingpack.LogoVector
@@ -33,7 +33,7 @@ import openanimationapp.core.ui.generated.resources.logout
 
 @Composable
 fun OpenNavSuiteScope.SearchAnimationBar(
-    userProfileStates: UserProfileStates,
+    userSessionState: UserSessionState,
     categories: List<SelectedQueryType>,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
@@ -65,7 +65,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
             RegularAppBar(
                 topAppBarScrollBehavior = topAppBarScrollBehavior,
                 modifier = modifier,
-                userProfileStates = userProfileStates,
+                userSessionState = userSessionState,
                 onSignOutClick = onSignOutClick,
                 onSearchClick = {
                     onToggleSearch(isShowSearchField.not())
@@ -80,7 +80,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
 
 @Composable
 fun OpenNavSuiteScope.RegularAppBar(
-    userProfileStates: UserProfileStates,
+    userSessionState: UserSessionState,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     onLogoClick: () -> Unit,
     onSearchClick: () -> Unit,
@@ -131,13 +131,13 @@ fun OpenNavSuiteScope.RegularAppBar(
                 )
             }
 
-            when (userProfileStates) {
-                is UserProfileStates.SignedIn -> {
+            when (userSessionState) {
+                is UserSessionState.SignedIn -> {
                     UserProfileSignedInButton(
                         onLogoutClick = onSignOutClick
                     )
                 }
-                UserProfileStates.SignedOut -> {
+                UserSessionState.SignedOut -> {
                     UserProfileSignedOutButton()
                 }
             }
