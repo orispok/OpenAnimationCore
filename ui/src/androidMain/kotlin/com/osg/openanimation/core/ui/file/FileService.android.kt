@@ -14,7 +14,6 @@ object FileServiceImpl : FileService, KoinComponent {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, jsonData)
-
             // (Optional) Here you're setting the title of the content
             putExtra(Intent.EXTRA_TITLE, "lottie animation")
             type = "text/json"

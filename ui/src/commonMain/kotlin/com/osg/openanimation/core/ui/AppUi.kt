@@ -8,6 +8,7 @@ import com.osg.openanimation.core.ui.graph.AppGraph
 import com.osg.openanimation.core.ui.theme.TrueTheme
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.ParametersHolder
 import org.koin.core.scope.Scope
@@ -20,6 +21,7 @@ class BaseApp(
     reportHandlerLoader: Scope.(ParametersHolder) -> ReportSubmissionService,
     signInLoader: () -> SignInProviderFactory,
     baseUrl: String,
+    platformModules : List<Module> = emptyList()
 ) {
     init {
         val mediaModule = module {
@@ -38,8 +40,9 @@ class BaseApp(
             single<AppLinkProvider> { AppLinkProvider(baseUrl) }
             singleOf<SignInProviderFactory>(signInLoader)
         }
+        val allModules = platformModules + mediaModule
         startKoin {
-            modules(mediaModule)
+            modules(allModules)
         }
     }
 
