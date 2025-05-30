@@ -1,0 +1,8 @@
+<resources>
+    <string name="logout">Logout</string>
+    <string name="sign_in">Sign In</string>
+    <string name="trending">Trending</string>
+    <string name="liked">Liked</string>
+    <string name="explore">Explore</string>
+    <string name="report">Report</string>
+</resources>

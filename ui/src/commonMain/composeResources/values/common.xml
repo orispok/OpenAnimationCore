@@ -1,0 +1,64 @@
+<resources>
+    <string name="minimal">Minimal</string>
+    <string name="abstract">Abstract</string>
+    <string name="three_d_style">3D Style</string>
+    <string name="flat_design">Flat Design</string>
+    <string name="hand_drawn">Hand Drawn</string>
+    <string name="neon">Neon</string>
+    <string name="line_art">Line Art</string>
+    <string name="gradient_glow">Gradient Glow</string>
+
+    <string name="onboarding">Onboarding</string>
+    <string name="loading">Loading</string>
+    <string name="success">Success</string>
+    <string name="error">Error</string>
+    <string name="empty_states">Empty States</string>
+    <string name="navigation">Navigation</string>
+    <string name="transitions">Transitions</string>
+    <string name="tutorials">Tutorials</string>
+
+    <string name="happy">Happy</string>
+    <string name="sad">Sad</string>
+    <string name="surprised">Surprised</string>
+    <string name="confused">Confused</string>
+    <string name="thumbs_up">Thumbs Up</string>
+    <string name="clapping">Clapping</string>
+    <string name="love">Love</string>
+    <string name="celebration">Celebration</string>
+
+    <string name="buttons">Buttons</string>
+    <string name="switches">Switches</string>
+    <string name="toggles">Toggles</string>
+    <string name="icons">Icons</string>
+    <string name="checkboxes">Checkboxes</string>
+    <string name="sliders">Sliders</string>
+    <string name="tooltips">Tooltips</string>
+    <string name="alerts">Alerts</string>
+
+    <string name="holidays">Holidays</string>
+    <string name="halloween">Halloween</string>
+    <string name="christmas">Christmas</string>
+    <string name="new_year">New Year</string>
+    <string name="valentines">Valentine\'s</string>
+    <string name="summer">Summer</string>
+    <string name="winter">Winter</string>
+
+    <string name="business">Business</string>
+    <string name="education">Education</string>
+    <string name="finance">Finance</string>
+    <string name="healthcare">Healthcare</string>
+    <string name="tech">Tech</string>
+    <string name="gaming">Gaming</string>
+    <string name="travel">Travel</string>
+    <string name="ecommerce">E-commerce</string>
+
+    <string name="progress">Progress</string>
+    <string name="notifications">Notifications</string>
+    <string name="upload_download">Upload/Download</string>
+    <string name="sync">Sync</string>
+    <string name="search">Search</string>
+    <string name="refresh">Refresh</string>
+    <string name="settings">Settings</string>
+    <string name="unlock">Unlock</string>
+    <string name="unknown">Unknown</string>
+</resources>
