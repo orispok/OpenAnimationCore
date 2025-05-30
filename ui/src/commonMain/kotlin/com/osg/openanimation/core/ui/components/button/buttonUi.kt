@@ -7,10 +7,10 @@ import com.osg.core.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.graph.NavigationUiItem
 import com.osg.openanimation.core.ui.util.icons.Explore
 import com.osg.openanimation.core.ui.util.icons.TrendingUp
-import openanimationapp.core.ui.generated.resources.Res
-import openanimationapp.core.ui.generated.resources.explore
-import openanimationapp.core.ui.generated.resources.liked
-import openanimationapp.core.ui.generated.resources.trending
+import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.explore
+import com.osg.openanimation.core.ui.generated.resources.liked
+import com.osg.openanimation.core.ui.generated.resources.trending
 
 
 val SelectedQueryType.ExploreCategory.buttonUi: NavigationUiItem

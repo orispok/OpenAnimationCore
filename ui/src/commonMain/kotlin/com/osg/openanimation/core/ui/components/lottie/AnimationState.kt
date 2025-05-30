@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import io.github.alexzhirkevich.compottie.LottieCompositionResult
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
-import openanimationapp.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.Res
 
 @Immutable
 data class AnimationDataState(

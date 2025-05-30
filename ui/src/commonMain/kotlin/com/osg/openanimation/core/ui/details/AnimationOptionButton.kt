@@ -8,8 +8,8 @@ import com.osg.core.components.report.AnimationReport
 import com.osg.openanimation.core.ui.components.bar.DropDownAnimatingIcon
 import com.osg.openanimation.core.ui.components.bar.GeneralIconButtonItem
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import openanimationapp.core.ui.generated.resources.Res
-import openanimationapp.core.ui.generated.resources.report
+import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.report
 
 
 @Composable

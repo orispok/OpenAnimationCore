@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+group = "com.osg.openanimation.core"
 
 kotlin {
     js(IR){

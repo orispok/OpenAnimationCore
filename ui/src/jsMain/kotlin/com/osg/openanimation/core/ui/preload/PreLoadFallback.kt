@@ -4,8 +4,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.font.FontFamily
 import com.osg.openanimation.core.ui.theme.commonFontResource
-import openanimationapp.core.ui.generated.resources.Res
-import openanimationapp.core.ui.generated.resources.noto_color_emoji
+import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.noto_color_emoji
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.preloadFont
 

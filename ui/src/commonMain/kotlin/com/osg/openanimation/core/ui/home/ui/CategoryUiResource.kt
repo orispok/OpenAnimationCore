@@ -1,7 +1,7 @@
 package com.osg.openanimation.core.ui.home.ui
 
 import com.osg.openanimation.core.data.animation.AnimationCategory
-import openanimationapp.core.ui.generated.resources.*
+import com.osg.openanimation.core.ui.generated.resources.*
 import org.jetbrains.compose.resources.StringResource
 
 val AnimationCategory.strResource: StringResource

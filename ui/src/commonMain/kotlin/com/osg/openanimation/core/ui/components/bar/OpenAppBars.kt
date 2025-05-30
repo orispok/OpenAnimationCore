@@ -20,16 +20,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
-
 import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
 import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.logout
 import com.osg.openanimation.core.ui.util.icons.Logout
 import com.osg.openanimation.core.ui.util.icons.Tag
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
-import openanimationapp.core.ui.generated.resources.Res
-import openanimationapp.core.ui.generated.resources.logout
 
 @Composable
 fun OpenNavSuiteScope.SearchAnimationBar(

@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.components.shimmer.shimmerLoadingAnimation
 import com.osg.openanimation.core.ui.util.resource.string
 import com.osg.multibase.signin.domain.icons.googleIcon
-import openanimationapp.core.ui.generated.resources.Res
-import openanimationapp.core.ui.generated.resources.sign_button_google
+import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.sign_button_google
 import org.jetbrains.compose.resources.StringResource
 
 @Immutable
