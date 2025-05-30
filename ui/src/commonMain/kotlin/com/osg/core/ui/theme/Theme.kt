@@ -12,7 +12,6 @@ import openanimationapp.core.ui.generated.resources.Res
 import openanimationapp.core.ui.generated.resources.lora_variable_font_wght
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.FontResource
-import org.koin.compose.koinInject
 
 val appLightScheme = lightColorScheme(
     primary = primaryLight,
