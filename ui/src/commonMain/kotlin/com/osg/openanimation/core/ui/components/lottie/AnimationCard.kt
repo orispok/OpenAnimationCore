@@ -54,7 +54,7 @@ fun AnimationCard(
         modifier = modifier
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
             .clickable(onClick = onClick),
         animationData = animationState,
         contentScale = ContentScale.Fit

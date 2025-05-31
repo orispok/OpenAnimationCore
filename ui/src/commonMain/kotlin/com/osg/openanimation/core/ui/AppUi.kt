@@ -50,16 +50,15 @@ class BaseApp(
     fun AppEntry(
         onNavHostReady: suspend (NavController) -> Unit = {}
     ) {
-        val systemDark = isSystemInDarkTheme()
-        var isDarkMode by remember { mutableStateOf(systemDark) }
+        var isDarkTheme by remember { mutableStateOf(true) }
         TrueTheme(
             linkProvider = koinInject(),
-            isDarkTheme = isDarkMode,
+            isDarkTheme = isDarkTheme,
         ) {
             AppGraph(
-                isDarkMode = isDarkMode,
+                isDarkTheme = isDarkTheme,
                 onSwitchMode = {
-                    isDarkMode = it
+                    isDarkTheme = it
                 },
                 onNavHostReady = onNavHostReady
             )

@@ -39,7 +39,7 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppGraph(
-    isDarkMode: Boolean = false,
+    isDarkTheme: Boolean = false,
     onSwitchMode: (Boolean) -> Unit = {},
     onNavHostReady: suspend (NavController) -> Unit = {}
 ) {
@@ -47,7 +47,7 @@ fun AppGraph(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.currentGraph
     OpenNavigationWrapper(
-        isDarkMode = isDarkMode,
+        isDarkMode = isDarkTheme,
         onSwitchMode = onSwitchMode,
         currentDestination = currentDestination ,
         onRailDst = {
