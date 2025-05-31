@@ -14,16 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.osg.openanimation.core.ui.di.SignInProviderFactory
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.components.lottie.LottieAnimationView
+import com.osg.openanimation.core.ui.di.SignInProviderFactory
+import com.osg.openanimation.core.ui.di.UserRepository
 import org.koin.compose.koinInject
 
 
 @Composable
 fun SignInReasoningDialog(
     signInService: SignInProviderFactory = koinInject(),
-    onRegistered: (Result<SignInResult>) -> Unit = {},
+    userRepository: UserRepository = koinInject(),
     onDismissRequest: () -> Unit,
 ){
     Dialog(
@@ -38,7 +39,7 @@ fun SignInReasoningDialog(
                 SignInReasoningContent(
                     signInProviders = signInService.buildSignInProviders(),
                     modifier = Modifier,
-                    onRegistered = onRegistered
+                    onRegistered = userRepository::onRegistered
                 )
             }
         }
@@ -48,13 +49,13 @@ fun SignInReasoningDialog(
 @Composable
 fun SignInReasoningDialogView(
     modifier: Modifier = Modifier,
-    onRegistered: (Result<SignInResult>) -> Unit = {},
 ){
     val signInService: SignInProviderFactory = koinInject()
+    val userRepository: UserRepository = koinInject()
     SignInReasoningContent(
         signInProviders = signInService.buildSignInProviders(),
         modifier = modifier,
-        onRegistered = onRegistered
+        onRegistered = userRepository::onRegistered
     )
 }
 

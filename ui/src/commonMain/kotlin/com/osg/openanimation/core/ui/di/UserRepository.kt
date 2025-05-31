@@ -3,6 +3,7 @@
 package com.osg.openanimation.core.ui.di
 
 import com.osg.openanimation.core.data.use.UserProfile
+import com.osg.openanimation.core.ui.components.signin.SignInResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 
@@ -22,4 +23,5 @@ interface UserRepository{
     suspend fun likeAnimation(hash: String)
     suspend fun dislikeAnimation(hash: String)
     fun onUserSignOut()
+    fun onRegistered(signInResultState: Result<SignInResult>)
 }
