@@ -1,21 +1,11 @@
 package com.osg.openanimation.core.ui.home.model
 
 import com.osg.core.di.data.FilterQueryType
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.core.di.data.SelectedQueryType
-import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-
-fun Collection<AnimationMetadata>.extractSortedTags(): List<String> {
-    val tagFrequency = mutableMapOf<String, Int>()
-    forEach { metadata ->
-        metadata.tags.forEach { tag ->
-            tagFrequency[tag] = (tagFrequency[tag] ?: 0) + 1
-        }
-    }
-    return tagFrequency.keys.sortedByDescending { tagFrequency[it] }
-}
+import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
+import com.osg.openanimation.core.ui.di.AnimationContentLoader
+import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 
 fun Collection<AnimationMetadata>.filterSortByText(
     filterChipType: FilterQueryType
