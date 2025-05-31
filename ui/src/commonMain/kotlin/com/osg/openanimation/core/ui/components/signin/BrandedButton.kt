@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.components.shimmer.shimmerLoadingAnimation
+import com.osg.openanimation.core.ui.components.loading.shimmerLoadingAnimation
 import com.osg.openanimation.core.ui.util.resource.string
 import com.osg.multibase.signin.domain.icons.googleIcon
 import com.osg.openanimation.core.ui.generated.resources.Res

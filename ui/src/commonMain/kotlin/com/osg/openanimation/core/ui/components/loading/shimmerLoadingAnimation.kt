@@ -1,4 +1,4 @@
-package com.osg.openanimation.core.ui.components.shimmer
+package com.osg.openanimation.core.ui.components.loading
 import androidx.compose.animation.core.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed

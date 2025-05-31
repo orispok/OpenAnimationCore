@@ -23,6 +23,7 @@ import androidx.navigation.toRoute
 import com.osg.core.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.components.bar.OpenNavigationWrapper
 import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
+import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialogView
 import com.osg.openanimation.core.ui.details.AnimationDetailsPanes
 import com.osg.openanimation.core.ui.details.AnimationDetailsViewModel
@@ -116,12 +117,9 @@ fun AppGraph(
                         }
 
                         ExploreScreenStates.Loading -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                // Show loading indicator
-                            }
+                            LoadingAnimation(
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     }
                 }
@@ -132,7 +130,9 @@ fun AppGraph(
                     val uiState by detailsViewModel.uiState.collectAsState()
                     when(val detailsUiState = uiState){
                         DetailsScreenStates.Loading -> {
-
+                            LoadingAnimation(
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                         is DetailsScreenStates.Success -> {
                             AnimationDetailsPanes(
