@@ -140,13 +140,14 @@ fun AppGraph(
                                 relatedAnimations = detailsUiState.relatedAnimations,
                                 onLikeClick = detailsViewModel::onLikeClick,
                                 onDownloadClick = detailsViewModel::onDownloadClick,
+                                onDismissSignInDialog = detailsViewModel::onDismissSignInDialog,
                                 onTagClick = {
                                     val selectedQueryType = SelectedQueryType.Tag(it)
                                     navController.navigate(
                                         Destination.Home(selectedQueryType)
                                     )
                                 },
-                                onAnimationClicked = { animation ->
+                                onRelatedAnimationClicked = { animation ->
                                     navController.navigate(
                                         Destination.AnimationDetails(animation.metadata.hash)
                                     )

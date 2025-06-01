@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.file.fileService
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.UserSessionState
@@ -20,7 +19,7 @@ data class DetailsUiPane(
     val animationState: AnimationDataState,
     val metadata: AnimationMetadata,
     val animationStats: AnimationStats,
-    val signInState: UserSessionState,
+    val dialogToShow: DialogType? = null,
     val isLiked: Boolean = false,
 )
 sealed interface DetailsScreenStates {
@@ -38,7 +37,9 @@ class AnimationDetailsViewModel(
     private val dataFetcher: AnimationContentLoader by inject()
     private val metaFetcher: AnimationMetadataRepository by inject()
     private val userRepository: UserRepository by inject()
-    private val metaState : Flow<AnimationUiData>  = flow {
+    private val userActionRequestState = MutableStateFlow<DialogType?>(null)
+
+    private val animationUiState : SharedFlow<AnimationUiData>  = flow {
         val animationMeta = metaFetcher.fetchMetaByHash(animationHash)
         val animationUi =  AnimationUiData(
             animationState = AnimationDataState(
@@ -49,18 +50,30 @@ class AnimationDetailsViewModel(
             metadata = animationMeta,
         )
         emit(animationUi)
-    }
+    }.shareIn(
+        replay = 1,
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+    )
+
+    private val userSharedFlow: SharedFlow<UserSessionState> = userRepository.profileFlow
+        .shareIn(
+            replay = 1,
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+        )
 
     val uiState : StateFlow<DetailsScreenStates> = combine(
-        metaState,
-        userRepository.profileFlow,
+        animationUiState,
+        userSharedFlow,
         metaFetcher.animationStatsFlow(animationHash),
-    ) { meta, loggedState, stats ->
+        userActionRequestState
+    ) { meta, loggedState, stats, dialogToShow ->
         val details = DetailsUiPane(
             animationState = meta.animationState,
             metadata = meta.metadata,
-            signInState = loggedState,
             animationStats = stats,
+            dialogToShow = dialogToShow,
             isLiked = when (loggedState) {
                 is UserSessionState.SignedIn -> loggedState.favorites.contains(meta.metadata.hash)
                 UserSessionState.SignedOut -> false
@@ -89,26 +102,56 @@ class AnimationDetailsViewModel(
         initialValue = DetailsScreenStates.Loading
     )
 
-    fun onLikeClick(isLiked: Boolean) {
+    fun onLikeClick(isCurrentLike: Boolean) {
+        userActionRequestState.value = DialogType.Export.Loading
         viewModelScope.launch {
-            if (isLiked) {
-                userRepository.likeAnimation(animationHash)
-            }else{
-                userRepository.dislikeAnimation(animationHash)
+            val currentUserState = userSharedFlow.first()
+            when(currentUserState){
+                is UserSessionState.SignedIn -> {
+                    reactOnAnimation(currentIsLike = isCurrentLike)
+                }
+                UserSessionState.SignedOut -> {
+                    userActionRequestState.value = DialogType.SignInDialog
+                }
             }
         }
     }
 
     fun onDownloadClick(downloadRequest: AnimationMetadata) {
+        userActionRequestState.value = DialogType.Export.Loading
         viewModelScope.launch {
-            val animationState = dataFetcher.fetchAnimationByPath(downloadRequest.localFileName)
-            val saveName = downloadRequest.localFileName.substringAfterLast('/')
-            fileService.saveFile(
-                byteArray = animationState,
-                fileName = saveName,
-            )
-            userRepository.onUserDownload(animationHash)
+            val currentUserState = userSharedFlow.first()
+            when(currentUserState){
+                is UserSessionState.SignedIn -> {
+                    val animationMeta = animationUiState.first()
+
+                    userActionRequestState.value = DialogType.Export.Success(
+                        fileName = downloadRequest.localFileName.substringAfterLast('/'),
+                        animationData = dataFetcher
+                            .fetchAnimationByPath(animationMeta.metadata.localFileName)
+                            .decodeToString()
+                    )
+                }
+                UserSessionState.SignedOut -> {
+                    userActionRequestState.value = DialogType.SignInDialog
+                }
+            }
         }
     }
 
+    private fun reactOnAnimation(
+        currentIsLike: Boolean,
+    ){
+        viewModelScope.launch {
+            if (currentIsLike) {
+                userRepository.dislikeAnimation(animationHash)
+            }else{
+                userRepository.likeAnimation(animationHash)
+            }
+        }
+    }
+
+    fun onDismissSignInDialog() {
+        userActionRequestState.value = null
+    }
 }

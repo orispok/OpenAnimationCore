@@ -24,8 +24,6 @@ import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.util.icons.Download
 import com.osg.openanimation.core.ui.util.icons.Link
-import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
-import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.util.adaptive.isCompact
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
 import com.osg.openanimation.core.ui.util.link.createClipEntryWithPlainText
@@ -42,9 +40,10 @@ fun AnimationDetailsPanes(
     modifier: Modifier = Modifier,
     detailsUiState: DetailsUiPane,
     relatedAnimations: List<AnimationUiData>,
-    onAnimationClicked: (AnimationUiData) -> Unit,
+    onRelatedAnimationClicked: (AnimationUiData) -> Unit,
     onLikeClick: (Boolean) -> Unit,
     onDownloadClick: (AnimationMetadata) -> Unit,
+    onDismissSignInDialog: () -> Unit,
     onTagClick: (String) -> Unit,
 ) {
     if (isCompact) {
@@ -52,8 +51,11 @@ fun AnimationDetailsPanes(
             modifier = modifier.padding(horizontal = 16.dp),
             detailsUiState = detailsUiState,
             onLikeClick = onLikeClick,
-            onDownloadClick = onDownloadClick,
-            onTagClick = onTagClick
+            onTagClick = onTagClick,
+            onDownloadClick = {
+                onDownloadClick(detailsUiState.metadata)
+            },
+            onDismissSignInDialog = onDismissSignInDialog,
         )
     }else{
         Row(
@@ -64,13 +66,16 @@ fun AnimationDetailsPanes(
                 modifier = Modifier.weight(1f),
                 detailsUiState = detailsUiState,
                 onLikeClick = onLikeClick,
-                onDownloadClick = onDownloadClick,
                 onTagClick = onTagClick,
+                onDownloadClick = {
+                    onDownloadClick(detailsUiState.metadata)
+                },
+                onDismissSignInDialog = onDismissSignInDialog,
             )
             RelatedAnimationsPane(
                 modifier = Modifier,
                 relatedAnimations = relatedAnimations,
-                onAnimationClicked = onAnimationClicked
+                onAnimationClicked = onRelatedAnimationClicked
             )
         }
     }
@@ -82,25 +87,19 @@ fun AnimationDetailsPanes(
 fun AnimationDetailsView(
     modifier: Modifier = Modifier,
     detailsUiState: DetailsUiPane,
+    onDismissSignInDialog: () -> Unit,
     onLikeClick: (Boolean) -> Unit,
-    onDownloadClick: (AnimationMetadata) -> Unit,
+    onDownloadClick: () -> Unit,
     onTagClick: (String) -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    val animationState = detailsUiState.animationState
-    var openSignInDialog by remember { mutableStateOf(false) }
-    if (openSignInDialog) {
-        SignInReasoningDialog{
-            openSignInDialog = false
-        }
-
-        LaunchedEffect(detailsUiState.signInState) {
-            if (detailsUiState.signInState is UserSessionState.SignedIn) {
-                openSignInDialog = false
-            }
-        }
+    detailsUiState.dialogToShow?.let { dialogType ->
+        AnimationDialogTypeView(
+            dialogType = dialogType,
+            onDismissRequest = onDismissSignInDialog
+        )
     }
 
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -113,25 +112,15 @@ fun AnimationDetailsView(
             isLiked = detailsUiState.isLiked,
             animationMetadata = detailsUiState.metadata,
             onLikeClick = {
-                if (detailsUiState.signInState is UserSessionState.SignedOut) {
-                    openSignInDialog = true
-                } else {
-                    onLikeClick(detailsUiState.isLiked.not())
-                }
+                onLikeClick(detailsUiState.isLiked)
             },
-            onDownloadClick = {
-                if (detailsUiState.signInState is UserSessionState.SignedOut) {
-                    openSignInDialog = true
-                } else {
-                    onDownloadClick(detailsUiState.metadata)
-                }
-            }
+            onDownloadClick = onDownloadClick
         )
         val containerSize = LocalWindowInfo.current.containerSize
         val animationHeight = (containerSize.height * 0.7f).roundToInt()
         AnimationCard(
             modifier = Modifier.height(animationHeight.pxToDp()),
-            animationState = animationState,
+            animationState = detailsUiState.animationState,
         )
         Text(
             text = detailsUiState.metadata.name,
@@ -164,6 +153,8 @@ fun AnimationDetailsView(
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
+
+
 
 @Composable
 fun AnimationDetailsActions(

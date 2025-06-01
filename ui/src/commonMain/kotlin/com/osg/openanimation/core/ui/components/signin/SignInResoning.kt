@@ -20,7 +20,6 @@ import com.osg.openanimation.core.ui.di.SignInProviderFactory
 import com.osg.openanimation.core.ui.di.UserRepository
 import org.koin.compose.koinInject
 
-
 @Composable
 fun SignInReasoningDialog(
     signInService: SignInProviderFactory = koinInject(),
@@ -39,7 +38,10 @@ fun SignInReasoningDialog(
                 SignInReasoningContent(
                     signInProviders = signInService.buildSignInProviders(),
                     modifier = Modifier,
-                    onRegistered = userRepository::onRegistered
+                    onRegistered = {
+                        userRepository.onRegistered(it)
+                        onDismissRequest()
+                    }
                 )
             }
         }
