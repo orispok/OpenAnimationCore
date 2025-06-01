@@ -1,5 +1,6 @@
 package com.osg.core.ui.details
 
+import com.osg.openanimation.core.ui.details.toHumanReadableSize
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
