@@ -122,7 +122,7 @@ fun OpenNavSuiteScope.RegularAppBar(
             }
             val uriHandler = LocalUriHandler.current
             IconButton(onClick = {
-                uriHandler.openUri("https://github.com/orispok/OpenAnimation")
+                uriHandler.openUri("https://github.com/orispok/OpenAnimationApp")
             }) {
                 Icon(
                     imageVector = githubVector,
