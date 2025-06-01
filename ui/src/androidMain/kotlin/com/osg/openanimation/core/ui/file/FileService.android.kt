@@ -27,12 +27,8 @@ object ExportServiceImpl : ExportService {
             type = "text/json"
         }
         val shareIntent = Intent.createChooser(sendIntent, null)
-        var isStarted by remember { mutableStateOf(false) }
-        if (isStarted){
-            startActivity(koinInject(), shareIntent, null)
-        }
+        startActivity(koinInject(), shareIntent, null)
         LaunchedEffect(Unit) {
-            isStarted = true
             onFinished()
         }
     }

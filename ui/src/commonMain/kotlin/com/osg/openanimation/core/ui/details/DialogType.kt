@@ -13,7 +13,6 @@ sealed interface DialogType {
             val animationData: String,
             val fileName: String,
         ) : Export
-        data object Loading: Export
     }
 }
 
@@ -29,11 +28,6 @@ fun AnimationDialogTypeView(
                 fileName = dialogType.fileName,
                 onFinished = onDismissRequest,
             )
-        }
-        is DialogType.Export.Loading -> {
-            Dialog(onDismissRequest = onDismissRequest) {
-                LoadingAnimation()
-            }
         }
         is DialogType.SignInDialog -> {
             SignInReasoningDialog(

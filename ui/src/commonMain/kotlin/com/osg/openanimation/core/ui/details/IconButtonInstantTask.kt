@@ -80,3 +80,29 @@ fun IconButtonInstantTask(
         }
     }
 }
+
+
+@Composable
+fun TransitionIconButton(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    isTransitioning: Boolean
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isTransitioning) 0.8f else 1.0f,
+        animationSpec = tween(300),
+        label = "iconScaleAnimation"
+    )
+
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.graphicsLayer(scaleX = scale, scaleY = scale)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}

@@ -5,23 +5,37 @@ import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
+import com.osg.openanimation.core.ui.components.lottie.toAnimationDataState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+data class AnimationAndRelated(
+    val animationUiData: AnimationUiData,
+    val relatedAnimations: List<AnimationUiData>,
+)
+
 data class DetailsUiPane(
-    val animationState: AnimationDataState,
-    val metadata: AnimationMetadata,
+    val animationUiData: AnimationUiData,
     val animationStats: AnimationStats,
     val dialogToShow: DialogType? = null,
+    val isLikeTransition: Boolean = false,
+    val isDownloadTransition: Boolean = false,
     val isLiked: Boolean = false,
 )
+
+data class LikeStatsData(
+    val animationStats: AnimationStats,
+    val isLiked: Boolean,
+)
+
 sealed interface DetailsScreenStates {
     data object Loading : DetailsScreenStates
     data class Success(
@@ -30,6 +44,10 @@ sealed interface DetailsScreenStates {
     ) : DetailsScreenStates
 }
 
+data class ButtonTransitionState(
+    val isDownloadTransition: Boolean = false,
+    val isLikeTransition: Boolean = false,
+)
 
 class AnimationDetailsViewModel(
     private val animationHash: String,
@@ -38,18 +56,21 @@ class AnimationDetailsViewModel(
     private val metaFetcher: AnimationMetadataRepository by inject()
     private val userRepository: UserRepository by inject()
     private val userActionRequestState = MutableStateFlow<DialogType?>(null)
+    private val buttonTransitionState = MutableStateFlow(ButtonTransitionState())
 
-    private val animationUiState : SharedFlow<AnimationUiData>  = flow {
-        val animationMeta = metaFetcher.fetchMetaByHash(animationHash)
-        val animationUi =  AnimationUiData(
-            animationState = AnimationDataState(
-                hash = animationMeta.hash,
-            ){
-                dataFetcher.fetchAnimationByPath(animationMeta.localFileName)
-            },
-            metadata = animationMeta,
+
+    private val animationUiState : SharedFlow<AnimationAndRelated>  = flow {
+        val meta = metaFetcher.fetchMetaByHash(animationHash)
+        val relatedAnimations =  metaFetcher.fetchRelatedAnimations(
+            animationMetadata = meta,
+            count = 4
         )
-        emit(animationUi)
+        emit(
+            AnimationAndRelated(
+                animationUiData = dataFetcher.toAnimationDataState(meta),
+                relatedAnimations = relatedAnimations.map(dataFetcher::toAnimationDataState)
+            )
+        )
     }.shareIn(
         replay = 1,
         scope = viewModelScope,
@@ -63,47 +84,50 @@ class AnimationDetailsViewModel(
             started = SharingStarted.WhileSubscribed(5_000L),
         )
 
+    private val statsLikeFlow = combine(
+        metaFetcher.animationStatsFlow(animationHash),
+        userRepository.profileFlow
+    ){ stats, userSessionState ->
+        val isLiked = when (userSessionState) {
+            is UserSessionState.SignedIn -> userSessionState.favorites.contains(animationHash)
+            UserSessionState.SignedOut -> false
+        }
+        LikeStatsData(
+            animationStats = stats,
+            isLiked = isLiked
+        )
+    }
+
     val uiState : StateFlow<DetailsScreenStates> = combine(
         animationUiState,
         userSharedFlow,
-        metaFetcher.animationStatsFlow(animationHash),
-        userActionRequestState
-    ) { meta, loggedState, stats, dialogToShow ->
+        statsLikeFlow,
+        userActionRequestState,
+        buttonTransitionState,
+    ) { animationAndRelated, loggedState, statsLike, dialogToShow, buttonTransitions->
         val details = DetailsUiPane(
-            animationState = meta.animationState,
-            metadata = meta.metadata,
-            animationStats = stats,
+            animationUiData = animationAndRelated.animationUiData,
+            animationStats = statsLike.animationStats,
             dialogToShow = dialogToShow,
-            isLiked = when (loggedState) {
-                is UserSessionState.SignedIn -> loggedState.favorites.contains(meta.metadata.hash)
-                UserSessionState.SignedOut -> false
-            }
+            isLiked = statsLike.isLiked,
+            isLikeTransition = buttonTransitions.isLikeTransition,
+            isDownloadTransition = buttonTransitions.isDownloadTransition
         )
-        val relatedAnimations =  metaFetcher.fetchRelatedAnimations(
-            animationMetadata = meta.metadata,
-            count = 4
-        ).map { animationMeta ->
-            AnimationUiData(
-                animationState = AnimationDataState(
-                    hash = animationMeta.hash,
-                ){
-                    dataFetcher.fetchAnimationByPath(animationMeta.localFileName)
-                },
-                metadata = animationMeta,
-            )
-        }
+
         DetailsScreenStates.Success(
             detailsUiPane = details,
-            relatedAnimations = relatedAnimations,
+            relatedAnimations = animationAndRelated.relatedAnimations
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = DetailsScreenStates.Loading
     )
 
     fun onLikeClick(isCurrentLike: Boolean) {
-        userActionRequestState.value = DialogType.Export.Loading
+        buttonTransitionState.value = buttonTransitionState.value.copy(
+            isLikeTransition = true
+        )
         viewModelScope.launch {
             val currentUserState = userSharedFlow.first()
             when(currentUserState){
@@ -114,17 +138,21 @@ class AnimationDetailsViewModel(
                     userActionRequestState.value = DialogType.SignInDialog
                 }
             }
+            buttonTransitionState.value = buttonTransitionState.value.copy(
+                isLikeTransition = false
+            )
         }
     }
 
     fun onDownloadClick(downloadRequest: AnimationMetadata) {
-        userActionRequestState.value = DialogType.Export.Loading
+        buttonTransitionState.value = buttonTransitionState.value.copy(
+            isDownloadTransition = true
+        )
         viewModelScope.launch {
             val currentUserState = userSharedFlow.first()
             when(currentUserState){
                 is UserSessionState.SignedIn -> {
-                    val animationMeta = animationUiState.first()
-
+                    val animationMeta = animationUiState.first().animationUiData
                     userActionRequestState.value = DialogType.Export.Success(
                         fileName = downloadRequest.localFileName.substringAfterLast('/'),
                         animationData = dataFetcher
@@ -136,7 +164,11 @@ class AnimationDetailsViewModel(
                     userActionRequestState.value = DialogType.SignInDialog
                 }
             }
+            buttonTransitionState.value = buttonTransitionState.value.copy(
+                isDownloadTransition = false
+            )
         }
+
     }
 
     private fun reactOnAnimation(

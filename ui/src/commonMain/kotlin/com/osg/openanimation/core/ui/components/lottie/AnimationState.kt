@@ -2,10 +2,13 @@ package com.osg.openanimation.core.ui.components.lottie
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import com.osg.openanimation.core.data.animation.AnimationMetadata
+import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import io.github.alexzhirkevich.compottie.LottieCompositionResult
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 
 @Immutable
 data class AnimationDataState(
@@ -23,6 +26,17 @@ data class AnimationDataState(
     }
 }
 
+fun AnimationContentLoader.toAnimationDataState(
+    animationMeta: AnimationMetadata,
+): AnimationUiData {
+    return AnimationUiData(
+        animationState = AnimationDataState(animationMeta.hash) {
+            fetchAnimationByPath(animationMeta.localFileName)
+        },
+        metadata = animationMeta,
+    )
+
+}
 
 val AnimationDataState.compositionResult: LottieCompositionResult
     @Composable

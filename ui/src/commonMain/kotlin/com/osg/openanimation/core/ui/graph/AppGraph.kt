@@ -136,8 +136,7 @@ fun AppGraph(
                         }
                         is DetailsScreenStates.Success -> {
                             AnimationDetailsPanes(
-                                detailsUiState = detailsUiState.detailsUiPane,
-                                relatedAnimations = detailsUiState.relatedAnimations,
+                                detailsUiState = detailsUiState,
                                 onLikeClick = detailsViewModel::onLikeClick,
                                 onDownloadClick = detailsViewModel::onDownloadClick,
                                 onDismissSignInDialog = detailsViewModel::onDismissSignInDialog,
