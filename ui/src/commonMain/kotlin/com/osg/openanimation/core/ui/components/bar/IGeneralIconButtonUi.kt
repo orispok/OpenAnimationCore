@@ -7,19 +7,6 @@ interface IGeneralIconButtonUi {
     val stringResource: StringResource
 }
 
-data class GeneralIconButtonUi(
-    override val imageVector: ImageVector,
-    override val stringResource: StringResource,
-): IGeneralIconButtonUi
-
-fun IGeneralIconButtonUi.toItem(onClick: () -> Unit): GeneralIconButtonItem {
-    return GeneralIconButtonItem(
-        imageVector = imageVector,
-        stringResource = stringResource,
-        onClick = onClick
-    )
-}
-
 data class GeneralIconButtonItem(
     override val imageVector: ImageVector,
     override val stringResource: StringResource,

@@ -1,4 +1,4 @@
-package com.osg.core.components.report
+package com.osg.openanimation.core.ui.components.report
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -11,9 +11,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.osg.openanimation.core.ui.components.report.ReportUiState
-import com.osg.openanimation.core.ui.components.report.ReportViewModel
-import com.osg.openanimation.core.ui.components.report.displayName
 import kotlinx.coroutines.delay
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.report.ReportReasonOptions

@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.components.bar.OpenNavigationWrapper
 import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation

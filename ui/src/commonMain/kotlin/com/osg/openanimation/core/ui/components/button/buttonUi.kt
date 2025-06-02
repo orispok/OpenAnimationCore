@@ -3,7 +3,7 @@ package com.osg.openanimation.core.ui.components.button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.graph.NavigationUiItem
 import com.osg.openanimation.core.ui.util.icons.Explore
 import com.osg.openanimation.core.ui.util.icons.TrendingUp

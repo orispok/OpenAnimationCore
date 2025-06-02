@@ -11,7 +11,7 @@ enum class ScreenSizeClass {
     EXPANDED
 }
 
-val screenWidthClass: ScreenSizeClass
+val currentScreenWidthClass: ScreenSizeClass
     @Composable
     get() {
         val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -23,7 +23,7 @@ val screenWidthClass: ScreenSizeClass
         }
     }
 
-val screenHeightClass: ScreenSizeClass
+val currentScreenHeightClass: ScreenSizeClass
     @Composable
     get() {
         val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -35,6 +35,6 @@ val screenHeightClass: ScreenSizeClass
         }
     }
 
-val isCompact: Boolean
+val isCompactWidth: Boolean
     @Composable
-    get() = screenWidthClass == ScreenSizeClass.COMPACT
+    get() = currentScreenWidthClass == ScreenSizeClass.COMPACT

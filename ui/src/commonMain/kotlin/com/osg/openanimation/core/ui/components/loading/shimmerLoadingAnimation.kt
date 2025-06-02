@@ -17,7 +17,7 @@ fun Modifier.shimmerLoadingAnimation(
     widthOfShadowBrush: Int = 500,
     angleOfAxisY: Float = 270f,
     durationMillis: Int = 1000,
-    cornerSize: Dp = 0.dp
+    cornerRadiusDp: Dp = 0.dp
 ): Modifier {
     if (runShimmer.not()) {
         return this
@@ -30,7 +30,7 @@ fun Modifier.shimmerLoadingAnimation(
                 Color.Companion.White.copy(alpha = 0.5f),
                 Color.Companion.White.copy(alpha = 0.3f),
             )
-            val cornerSizePx = with(LocalDensity.current) { cornerSize.toPx() }
+            val cornerSizePx = with(LocalDensity.current) { cornerRadiusDp.toPx() }
             val transition = rememberInfiniteTransition(label = "")
 
             val translateAnimation = transition.animateFloat(

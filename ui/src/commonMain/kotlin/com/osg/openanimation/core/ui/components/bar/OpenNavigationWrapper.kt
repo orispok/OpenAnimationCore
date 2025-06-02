@@ -11,12 +11,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.osg.openanimation.core.ui.di.LocalLinkProvider
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.components.button.buttonUi
 import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.theme.component.DarkLightSwitch
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
-import com.osg.openanimation.core.ui.util.adaptive.screenWidthClass
+import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
 import com.osg.openanimation.core.ui.util.icons.MenuOpen
 import com.osg.openanimation.core.ui.util.icons.PrivacyTip
 import com.osg.openanimation.core.ui.util.icons.RoomService
@@ -53,7 +53,7 @@ fun OpenNavigationWrapper(
     // Avoid opening the modal drawer when there is a permanent drawer or a bottom nav bar,
     // but always allow closing an open drawer.
 
-    val navLayoutType = when(screenWidthClass){
+    val navLayoutType = when(currentScreenWidthClass){
         ScreenSizeClass.COMPACT -> AppNavType.NavigationDrawer
         ScreenSizeClass.MEDIUM -> AppNavType.NavigationRail
         ScreenSizeClass.EXPANDED -> AppNavType.NavigationRail

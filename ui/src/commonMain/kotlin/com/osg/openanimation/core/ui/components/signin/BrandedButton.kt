@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.components.loading.shimmerLoadingAnimation
 import com.osg.openanimation.core.ui.util.resource.string
-import com.osg.multibase.signin.domain.icons.googleIcon
+import com.osg.openanimation.core.ui.components.signin.icons.googleIcon
 import com.osg.openanimation.core.ui.generated.resources.Res
 import com.osg.openanimation.core.ui.generated.resources.sign_button_google
 import org.jetbrains.compose.resources.StringResource
@@ -56,7 +56,7 @@ fun BrandedButton(
 ) {
     var isClicked by remember { mutableStateOf(false) }
     ExtendedFloatingActionButton(
-        modifier = modifier.aspectRatio(6f).shimmerLoadingAnimation(isClicked, cornerSize = 10.dp),
+        modifier = modifier.aspectRatio(6f).shimmerLoadingAnimation(isClicked, cornerRadiusDp = 10.dp),
         shape = RoundedCornerShape(10.dp),
         containerColor = brandedButtonType.backgroundColor,
         onClick = {

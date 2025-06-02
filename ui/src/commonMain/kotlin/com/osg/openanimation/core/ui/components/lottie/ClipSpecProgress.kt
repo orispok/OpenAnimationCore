@@ -1,4 +1,4 @@
-package com.osg.core.components.lottie
+package com.osg.openanimation.core.ui.components.lottie
 
 import io.github.alexzhirkevich.compottie.LottieClipSpec
 

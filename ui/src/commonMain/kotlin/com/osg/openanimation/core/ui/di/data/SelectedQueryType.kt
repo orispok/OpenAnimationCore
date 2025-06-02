@@ -1,4 +1,4 @@
-package com.osg.core.di.data
+package com.osg.openanimation.core.ui.di.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,6 +1,6 @@
 package com.osg.openanimation.core.ui.di
 
-import com.osg.core.di.data.GuestQueryType
+import com.osg.openanimation.core.ui.di.data.GuestQueryType
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
 import kotlinx.coroutines.flow.Flow

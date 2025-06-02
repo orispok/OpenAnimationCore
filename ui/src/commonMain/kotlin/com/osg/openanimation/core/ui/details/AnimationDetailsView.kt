@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.components.license.description
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.ui.util.adaptive.isCompact
+import com.osg.openanimation.core.ui.util.adaptive.isCompactWidth
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
 import com.osg.openanimation.core.ui.util.time.fromEpochToDayDateFormat
 import com.osg.openanimation.core.data.animation.AnimationMetadata
@@ -35,7 +35,7 @@ fun AnimationDetailsPanes(
     onDismissSignInDialog: () -> Unit,
     onTagClick: (String) -> Unit,
 ) {
-    if (isCompact) {
+    if (isCompactWidth) {
         AnimationDetailsView(
             modifier = modifier.padding(horizontal = 16.dp),
             detailsUiState = detailsUiState.detailsUiPane,

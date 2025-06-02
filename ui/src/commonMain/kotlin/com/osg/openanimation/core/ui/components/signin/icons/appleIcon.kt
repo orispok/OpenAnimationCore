@@ -1,4 +1,4 @@
-package com.osg.multibase.signin.domain.icons
+package com.osg.openanimation.core.ui.components.signin.icons
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

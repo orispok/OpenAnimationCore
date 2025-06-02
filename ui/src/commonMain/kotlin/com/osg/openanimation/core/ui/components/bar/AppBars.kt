@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -20,12 +19,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.osg.core.di.data.SelectedQueryType
-import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.generated.resources.Res
-import com.osg.openanimation.core.ui.generated.resources.logout
-import com.osg.openanimation.core.ui.util.icons.Logout
 import com.osg.openanimation.core.ui.util.icons.Tag
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
@@ -47,7 +42,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
         modifier = modifier
     ){ expanded ->
         if (expanded) {
-            AppSearchController(
+            SearchBar(
                 onSearchItemSelected = {
                     onSearchItemSelected(it)
                     onToggleSearch(false)
@@ -146,43 +141,9 @@ fun OpenNavSuiteScope.RegularAppBar(
     )
 }
 
-@Composable
-fun UserProfileSignedInButton(
-    onLogoutClick: () -> Unit = {}
-){
-    OptionsButton(
-        imageVector = Icons.Filled.AccountCircle,
-        dropDownOptions = listOf(
-            GeneralIconButtonItem(
-                stringResource = Res.string.logout,
-                imageVector = Icons.AutoMirrored.Filled.Logout,
-                onClick = onLogoutClick
-            )
-        ),
-    )
-}
-
-@Composable
-fun UserProfileSignedOutButton(){
-    var openSignInDialog by remember { mutableStateOf(false) }
-    TextButton(onClick = {
-        openSignInDialog = true
-    }) {
-        Text(
-            text = "Sign In",
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-    if (openSignInDialog) {
-        SignInReasoningDialog{
-            openSignInDialog = false
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppSearchController(
+fun SearchBar(
     onSearchItemSelected: (SelectedQueryType) -> Unit,
     categories: List<SelectedQueryType>,
     query: String = "",

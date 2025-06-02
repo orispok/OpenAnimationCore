@@ -1,6 +1,6 @@
 package com.osg.openanimation.core.ui.home.domain
 
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 
 sealed interface ExploreScreenStates{
     data class Success(

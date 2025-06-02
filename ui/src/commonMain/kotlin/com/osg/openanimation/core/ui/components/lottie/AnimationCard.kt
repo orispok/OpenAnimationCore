@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.ui.details.AnimationOptionButton
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.data.animation.AnimationMetadata
 
 
 @Composable
@@ -68,13 +68,7 @@ fun AnimationQuickActions(
 ) {
     ListItem(
         headlineContent = { Text(animationMetadata.name) },
-//        supportingContent = { Text("1.3k downloads") },
-        leadingContent = {
-//            Icon(
-//                imageVector = Icons.Default.Face,
-//                contentDescription = "profile",
-//            )
-        },
+        leadingContent = {},
         trailingContent = {
             AnimationOptionButton(
                 animationMetadata = animationMetadata

@@ -1,7 +1,7 @@
 package com.osg.openanimation.core.ui.home.model
 
-import com.osg.core.di.data.FilterQueryType
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.FilterQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.AnimationContentLoader

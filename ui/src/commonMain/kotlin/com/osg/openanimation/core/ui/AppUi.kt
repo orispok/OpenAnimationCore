@@ -1,6 +1,5 @@
 package com.osg.openanimation.core.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import com.osg.openanimation.core.ui.di.*

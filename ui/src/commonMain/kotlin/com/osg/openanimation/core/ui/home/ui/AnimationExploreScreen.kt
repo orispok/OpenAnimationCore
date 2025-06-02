@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.osg.core.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.components.lottie.AnimationCaptionCard
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
-import com.osg.openanimation.core.ui.util.adaptive.screenWidthClass
+import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
 
 
 @Composable
@@ -28,7 +28,7 @@ fun AnimationGrid(
     onDestination: (Destination) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val columnCount = when(screenWidthClass){
+    val columnCount = when(currentScreenWidthClass){
         ScreenSizeClass.COMPACT -> 1
         ScreenSizeClass.MEDIUM -> 2
         ScreenSizeClass.EXPANDED -> 3

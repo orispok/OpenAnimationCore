@@ -5,7 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import com.osg.openanimation.core.ui.components.button.noRippleClickable
-import com.osg.core.components.lottie.ClipSpecProgress
+import com.osg.openanimation.core.ui.components.lottie.ClipSpecProgress
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.components.lottie.lottieClippedAnimation
 

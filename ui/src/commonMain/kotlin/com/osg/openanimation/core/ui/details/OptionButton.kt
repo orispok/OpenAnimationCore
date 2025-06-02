@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.osg.openanimation.core.ui.util.icons.Flag
-import com.osg.core.components.report.AnimationReport
+import com.osg.openanimation.core.ui.components.report.AnimationReport
 import com.osg.openanimation.core.ui.components.bar.DropDownAnimatingIcon
 import com.osg.openanimation.core.ui.components.bar.GeneralIconButtonItem
 import com.osg.openanimation.core.data.animation.AnimationMetadata
