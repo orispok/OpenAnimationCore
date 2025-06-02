@@ -22,6 +22,11 @@ kotlin {
     }
     iosArm64()
     iosSimulatorArm64()
+    jvm{
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
     sourceSets {
         commonMain{
             dependencies {
