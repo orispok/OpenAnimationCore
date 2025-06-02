@@ -10,6 +10,7 @@ import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -148,6 +149,9 @@ class AnimationDetailsViewModel(
                             .fetchAnimationByPath(animationMeta.metadata.localFileName)
                             .decodeToString()
                     )
+                    async {
+                        userRepository.onUserDownload(animationMeta.metadata.hash)
+                    }
                 }
                 UserSessionState.SignedOut -> {
                     userActionRequestState.value = DialogType.SignInDialog
