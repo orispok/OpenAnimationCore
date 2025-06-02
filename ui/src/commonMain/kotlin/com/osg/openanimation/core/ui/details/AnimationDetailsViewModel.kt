@@ -2,18 +2,16 @@ package com.osg.openanimation.core.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
-import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
 import com.osg.openanimation.core.ui.components.lottie.toAnimationDataState
-import kotlinx.coroutines.delay
+import com.osg.openanimation.core.ui.di.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
+import com.osg.openanimation.core.ui.di.UserRepository
+import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -26,7 +24,6 @@ data class DetailsUiPane(
     val animationUiData: AnimationUiData,
     val animationStats: AnimationStats,
     val dialogToShow: DialogType? = null,
-    val isLikeTransition: Boolean = false,
     val isDownloadTransition: Boolean = false,
     val isLiked: Boolean = false,
 )
@@ -46,7 +43,6 @@ sealed interface DetailsScreenStates {
 
 data class ButtonTransitionState(
     val isDownloadTransition: Boolean = false,
-    val isLikeTransition: Boolean = false,
 )
 
 class AnimationDetailsViewModel(
@@ -77,9 +73,9 @@ class AnimationDetailsViewModel(
         started = SharingStarted.WhileSubscribed(5_000L),
     )
 
-    private val userSharedFlow: SharedFlow<UserSessionState> = userRepository.profileFlow
-        .shareIn(
-            replay = 1,
+    private val userSharedFlow: StateFlow<UserSessionState> = userRepository.profileFlow
+        .stateIn(
+            initialValue = UserSessionState.SignedOut,
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
         )
@@ -110,7 +106,6 @@ class AnimationDetailsViewModel(
             animationStats = statsLike.animationStats,
             dialogToShow = dialogToShow,
             isLiked = statsLike.isLiked,
-            isLikeTransition = buttonTransitions.isLikeTransition,
             isDownloadTransition = buttonTransitions.isDownloadTransition
         )
 
@@ -124,23 +119,17 @@ class AnimationDetailsViewModel(
         initialValue = DetailsScreenStates.Loading
     )
 
-    fun onLikeClick(isCurrentLike: Boolean) {
-        buttonTransitionState.value = buttonTransitionState.value.copy(
-            isLikeTransition = true
-        )
-        viewModelScope.launch {
-            val currentUserState = userSharedFlow.first()
-            when(currentUserState){
-                is UserSessionState.SignedIn -> {
-                    reactOnAnimation(currentIsLike = isCurrentLike)
-                }
-                UserSessionState.SignedOut -> {
-                    userActionRequestState.value = DialogType.SignInDialog
-                }
+    fun onLikeClick(nextLike: Boolean): Boolean {
+        val currentUserState = userSharedFlow.value
+        return when(currentUserState){
+            is UserSessionState.SignedIn -> {
+                reactOnAnimation(nextLike = nextLike)
+                return nextLike
             }
-            buttonTransitionState.value = buttonTransitionState.value.copy(
-                isLikeTransition = false
-            )
+            UserSessionState.SignedOut -> {
+                userActionRequestState.value = DialogType.SignInDialog
+                false
+            }
         }
     }
 
@@ -172,13 +161,13 @@ class AnimationDetailsViewModel(
     }
 
     private fun reactOnAnimation(
-        currentIsLike: Boolean,
+        nextLike: Boolean,
     ){
         viewModelScope.launch {
-            if (currentIsLike) {
-                userRepository.dislikeAnimation(animationHash)
-            }else{
+            if (nextLike) {
                 userRepository.likeAnimation(animationHash)
+            }else{
+                userRepository.dislikeAnimation(animationHash)
             }
         }
     }

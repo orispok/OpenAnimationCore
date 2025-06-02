@@ -2,50 +2,23 @@
 
 package com.osg.openanimation.core.ui.details
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.di.LocalLinkProvider
 import com.osg.openanimation.core.ui.components.license.description
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
-import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
-import com.osg.openanimation.core.ui.util.icons.Download
-import com.osg.openanimation.core.ui.util.icons.Link
 import com.osg.openanimation.core.ui.util.adaptive.isCompact
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
-import com.osg.openanimation.core.ui.util.link.createClipEntryWithPlainText
 import com.osg.openanimation.core.ui.util.time.fromEpochToDayDateFormat
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import com.osg.openanimation.core.ui.components.loading.shimmerLoadingAnimation
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -57,7 +30,7 @@ fun AnimationDetailsPanes(
     modifier: Modifier = Modifier,
     detailsUiState: DetailsScreenStates.Success,
     onRelatedAnimationClicked: (AnimationUiData) -> Unit,
-    onLikeClick: (Boolean) -> Unit,
+    onLikeClick: (Boolean) -> Boolean,
     onDownloadClick: (AnimationMetadata) -> Unit,
     onDismissSignInDialog: () -> Unit,
     onTagClick: (String) -> Unit,
@@ -100,7 +73,7 @@ fun AnimationDetailsView(
     modifier: Modifier = Modifier,
     detailsUiState: DetailsUiPane,
     onDismissSignInDialog: () -> Unit,
-    onLikeClick: (Boolean) -> Unit,
+    onLikeClick: (Boolean) -> Boolean,
     onDownloadClick: (AnimationMetadata) -> Unit,
     onTagClick: (String) -> Unit
 ) {
@@ -123,12 +96,9 @@ fun AnimationDetailsView(
             modifier = Modifier.align(Alignment.End),
             isLiked = detailsUiState.isLiked,
             animationMetadata = detailsUiState.animationUiData.metadata,
-            onLikeClick = {
-                onLikeClick(detailsUiState.isLiked)
-            },
+            onLikeClick = onLikeClick,
             onDownloadClick = onDownloadClick,
             isDownloadedTransition = detailsUiState.isDownloadTransition,
-            isLikeTransition = detailsUiState.isLikeTransition,
         )
         val containerSize = LocalWindowInfo.current.containerSize
         val animationHeight = (containerSize.height * 0.6).roundToInt()
@@ -165,83 +135,6 @@ fun AnimationDetailsView(
             AnimationSpecItem(title = "⚠", value = detailsUiState.animationUiData.metadata.license.description)
         }
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun AnimationDetailsActions(
-    modifier: Modifier = Modifier,
-    animationMetadata: AnimationMetadata,
-    isLiked: Boolean,
-    isLikeTransition: Boolean,
-    isDownloadedTransition: Boolean,
-    onLikeClick: () -> Unit,
-    onDownloadClick: (AnimationMetadata) -> Unit,
-){
-    Row(
-        modifier = modifier,
-    ) {
-        IconButton(
-            modifier = Modifier,
-            onClick = onLikeClick, enabled = isLikeTransition.not()
-        ) {
-            AnimatedContent(
-                targetState = isLikeTransition,
-            ){ isTransition ->
-                if (isTransition){
-                    CircularProgressIndicator(
-                        modifier = Modifier.Companion.size(24.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 2.dp
-                    )
-                }else{
-                    Icon(
-                        modifier = Modifier,
-                        imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isLiked) "Unlike" else "Like",
-                        tint = if (isLiked) MaterialTheme.colorScheme.error else LocalContentColor.current
-                    )
-                }
-            }
-        }
-        IconButton(
-            onClick = { onDownloadClick(animationMetadata) },
-            enabled = isDownloadedTransition.not()
-        ) {
-            AnimatedContent(
-                targetState = isDownloadedTransition,
-            ){ isTransition ->
-                if (isTransition){
-                    CircularProgressIndicator(
-                        modifier = Modifier.Companion.size(24.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 2.dp
-                    )
-                }else{
-                    Icon(
-                        modifier = Modifier,
-                        imageVector = Icons.Default.Download,
-                        contentDescription = "Download Animation",
-                    )
-                }
-            }
-        }
-        val clipboardManager = LocalClipboard.current
-        val linkProvider = LocalLinkProvider.current
-        IconButtonInstantTask(
-            primaryIcon = Icons.Default.Link,
-            secondaryIcon = Icons.Default.Check,
-            onSuspendedClick = {
-                val link = linkProvider.windowUrl(Destination.AnimationDetails(animationMetadata.hash))
-                val clipEntry = createClipEntryWithPlainText(
-                    text = link,
-                )
-                clipboardManager.setClipEntry(clipEntry)
-            }
-        )
-        AnimationOptionButton(
-            animationMetadata = animationMetadata,
-        )
     }
 }
 

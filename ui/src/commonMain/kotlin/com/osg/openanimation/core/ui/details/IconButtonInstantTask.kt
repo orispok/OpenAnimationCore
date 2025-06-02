@@ -1,5 +1,6 @@
 package com.osg.openanimation.core.ui.details
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,93 +17,67 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+enum class IconAnimationState {
+    IDLE,
+    LOADING,
+    Done
+}
+
 @Composable
 fun IconButtonInstantTask(
     modifier: Modifier = Modifier,
     primaryIcon: ImageVector,
     secondaryIcon: ImageVector,
-    onSuspendedClick: suspend () -> Unit,
-) {
-    var isCopied by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
-
-    val iconColor by animateColorAsState(
-        targetValue = if (isCopied) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-        animationSpec = tween(300),
-        label = "iconColorAnimation"
-    )
-
-    val iconScale by animateFloatAsState(
-        targetValue = if (isCopied) 1.2f else 1.0f,
-        animationSpec = tween(300),
-        label = "iconScaleAnimation"
-    )
-
-    LaunchedEffect(isCopied) {
-        if (isCopied) {
-            delay(2000)
-            isCopied = false
-        }
-    }
-
-    val scope = rememberCoroutineScope()
-
-    IconButton(
-        onClick = {
-            if (!isLoading) {
-                scope.launch {
-                    isLoading = true
-                    try {
-                        onSuspendedClick()
-                        isCopied = true
-                    } finally {
-                        isLoading = false
-                    }
-                }
-            }
-        },
-        modifier = modifier,
-        enabled = !isLoading
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.Companion.size(24.dp),
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 2.dp
-            )
-        } else {
-            Icon(
-                imageVector = if (isCopied) secondaryIcon else primaryIcon,
-                contentDescription = if (isCopied) "Link Copied" else "Copy Link",
-                tint = iconColor,
-                modifier = Modifier.Companion.graphicsLayer(scaleX = iconScale, scaleY = iconScale)
-            )
-        }
-    }
-}
-
-
-@Composable
-fun TransitionIconButton(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
+    iconAnimationState: IconAnimationState,
+    onReturnToIdle: () -> Unit,
     onClick: () -> Unit,
-    isTransitioning: Boolean
 ) {
-    val scale by animateFloatAsState(
-        targetValue = if (isTransitioning) 0.8f else 1.0f,
-        animationSpec = tween(300),
-        label = "iconScaleAnimation"
-    )
+
+    LaunchedEffect(iconAnimationState) {
+        if (iconAnimationState == IconAnimationState.Done) {
+            delay(2000)
+            onReturnToIdle()
+        }
+    }
 
     IconButton(
         onClick = onClick,
-        modifier = modifier.graphicsLayer(scaleX = scale, scaleY = scale)
+        modifier = modifier,
+        enabled = iconAnimationState != IconAnimationState.LOADING
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface
-        )
+        AnimatedContent(
+            targetState = iconAnimationState,
+            label = "IconButtonContent",
+        ) { state ->
+            when (state) {
+                IconAnimationState.LOADING -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 2.dp
+                    )
+                }
+                else -> {
+                    val isDone = state == IconAnimationState.Done
+                    val iconColor by animateColorAsState(
+                        targetValue = if (isDone) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        animationSpec = tween(300),
+                        label = "iconColorAnimation"
+                    )
+
+                    val iconScale by animateFloatAsState(
+                        targetValue = if (isDone) 1.2f else 1.0f,
+                        animationSpec = tween(300),
+                        label = "iconScaleAnimation"
+                    )
+                    Icon(
+                        imageVector = if (isDone) secondaryIcon else primaryIcon,
+                        contentDescription = if (isDone) "Link Copied" else "Copy Link",
+                        tint = iconColor,
+                        modifier = Modifier.graphicsLayer(scaleX = iconScale, scaleY = iconScale)
+                    )
+                }
+            }
+        }
     }
 }
