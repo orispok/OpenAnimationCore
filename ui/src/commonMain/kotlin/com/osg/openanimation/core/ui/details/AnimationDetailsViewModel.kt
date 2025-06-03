@@ -144,7 +144,7 @@ class AnimationDetailsViewModel(
                 is UserSessionState.SignedIn -> {
                     val animationMeta = animationUiState.first().animationUiData
                     userActionRequestState.value = DialogType.Export.Success(
-                        fileName = downloadRequest.localFileName.substringAfterLast('/'),
+                        fileName = downloadRequest.downloadFileName(),
                         animationData = dataFetcher
                             .fetchAnimationByPath(animationMeta.metadata.localFileName)
                             .decodeToString()
@@ -179,4 +179,8 @@ class AnimationDetailsViewModel(
     fun onDismissSignInDialog() {
         userActionRequestState.value = null
     }
+}
+
+fun AnimationMetadata.downloadFileName(): String {
+    return name.replace(" ", "_").lowercase() + ".json"
 }
