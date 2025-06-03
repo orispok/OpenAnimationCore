@@ -30,11 +30,11 @@ sealed interface SelectedQueryType {
         }
     }
 
-    @Serializable
+    @Serializable @SerialName("Tag")
     data class Tag(val tag: String) : FilterQueryType{
         override val keySearch: String = tag
     }
-    @Serializable
+    @Serializable @SerialName("FreeText")
     data class FreeText(val text: String) : FilterQueryType{
         override val keySearch: String = text
     }

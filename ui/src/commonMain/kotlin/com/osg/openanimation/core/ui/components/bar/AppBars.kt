@@ -65,7 +65,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
                     onToggleSearch(isShowSearchField.not())
                 },
                 onLogoClick = {
-                    onSearchItemSelected(SelectedQueryType.ExploreCategory.Explore)
+                    onSearchItemSelected(SelectedQueryType.ExploreCategory.Trending)
                 },
             )
         }
