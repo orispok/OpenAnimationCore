@@ -19,8 +19,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.util.icons.Tag
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
@@ -111,7 +111,7 @@ fun OpenNavSuiteScope.RegularAppBar(
                 IconButton(onClick = onSearchClick) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Localized description"
+                        contentDescription = "search"
                     )
                 }
             }
@@ -121,7 +121,7 @@ fun OpenNavSuiteScope.RegularAppBar(
             }) {
                 Icon(
                     imageVector = githubVector,
-                    contentDescription = "Localized description"
+                    contentDescription = "github",
                 )
             }
 
