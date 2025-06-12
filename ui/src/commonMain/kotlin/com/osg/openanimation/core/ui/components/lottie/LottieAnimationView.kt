@@ -1,7 +1,7 @@
 package com.osg.openanimation.core.ui.components.lottie
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,22 +23,22 @@ fun LottieAnimationView(
     clipSpec: ClipSpecProgress = ClipSpecProgress(0f, 1f),
     contentScale: ContentScale = ContentScale.Fit,
 ){
-    val composition = animationData.compositionResult
+    val composition by animationData.compositionResult
     val progress by animateLottieCompositionAsState(
-        composition = composition.value,
+        composition = composition,
         iterations = iterations,
         clipSpec = clipSpec.lottieClipSpec
     )
     val painter = rememberLottiePainter(
-        composition = composition.value,
+        composition = composition,
         progress = { progress },
     )
     Box(
         modifier = modifier.fillMaxSize(),
     ){
         AnimatedVisibility(
-            enter = fadeIn(tween(500)),
-            visible = composition.isComplete,
+            enter = fadeIn() + scaleIn(),
+            visible = composition != null,
         ) {
             Image(
                 modifier = Modifier.fillMaxSize(),
