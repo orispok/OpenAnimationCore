@@ -11,17 +11,16 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(DelicateCoroutinesApi::class)
 fun fadeOutElement(
     elementId: String = "splash",
-    transitionDuration: Duration = 1.seconds,
-    keepDuration: Duration = 100.milliseconds
+    transitionDuration: Duration = 1.seconds
 ) {
-    val divElement = document.getElementById(elementId)
-    val element = divElement as HTMLDivElement
-    GlobalScope.launch {
-        delay(keepDuration)
-        val fadeOutMs = transitionDuration.inWholeMilliseconds
-        element.style.transition = "opacity ${fadeOutMs}ms ease-out"
-        element.style.opacity = "0"
-        delay(transitionDuration)
-        element.style.zIndex = "-1"
-    }
+    val transitionMs = transitionDuration.inWholeMilliseconds
+    val element = document.getElementById(elementId) as? HTMLElement ?: return
+
+    element.style.transition = "opacity ${transitionMs}ms ease-out"
+    element.style.opacity = "0"
+
+    val options = AddEventListenerOptions(once = true)
+    element.addEventListener("transitionend", {
+        element.remove()
+    }, options)
 }

@@ -31,6 +31,8 @@ kotlin {
         commonMain{
             dependencies {
                 implementation(projects.core.data)
+                implementation(projects.compottie.compottie)
+
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -38,7 +40,6 @@ kotlin {
                 implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
-                implementation(libs.compottie)
 
                 implementation(libs.adaptive)
                 implementation(libs.kotlinx.datetime)
