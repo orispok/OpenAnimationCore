@@ -1,5 +1,8 @@
 package com.osg.openanimation.core.ui.color
 
+import com.osg.openanimation.core.ui.color.model.TransformOptions
+import com.osg.openanimation.core.ui.color.model.extractGradients
+import com.osg.openanimation.core.ui.color.model.updateColorsInJson
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test

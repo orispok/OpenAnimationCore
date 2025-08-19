@@ -1,8 +1,8 @@
 package com.osg.core.ui.details
 
-import com.osg.openanimation.core.ui.color.LottiePart
-import com.osg.openanimation.core.ui.color.PathParts
-import com.osg.openanimation.core.ui.color.findElementByPath
+import com.osg.openanimation.core.ui.color.model.LottiePart
+import com.osg.openanimation.core.ui.color.util.PathParts
+import com.osg.openanimation.core.ui.color.util.findElementByPath
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray

@@ -1,6 +1,7 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,32 +16,13 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-
-@Composable
-fun ColorsEditView(
-    modifier: Modifier = Modifier,
-    lottieRaw: String,
-    hash: String,
-) {
-
-    val viewModel = viewModel { ColorsEditViewModel(lottieRaw, hash)  }
-    val uiState by viewModel.uiState.collectAsState()
-    ColorPaletteOptionsView(
-        modifier = modifier,
-        expanded = uiState.expanded,
-        transformOptions = uiState.options,
-        onPalletSelect = viewModel::onSelectColorTransformOption,
-    )
-}
 
 @Composable
 fun ColorPaletteOptionsView(
@@ -51,7 +33,7 @@ fun ColorPaletteOptionsView(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (expanded) {
             DropdownMenu(
@@ -75,7 +57,7 @@ fun ColorPaletteOptionsView(
         } else {
             Row(
                 modifier = Modifier,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 ColorPaletteView(
                     modifier = Modifier.weight(1f),
@@ -85,28 +67,6 @@ fun ColorPaletteOptionsView(
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "More options")
                 }
             }
-        }
-    }
-}
-
-
-
-data class TransformOptions(
-    val hueShift: Float = 0f,
-) {
-    fun transform(color: Color): Color {
-        val hslColor = color.toHsl()
-        return Color.hsl(
-            hue = (hslColor.hue + hueShift) % 360f,
-            saturation = hslColor.saturation,
-            lightness = hslColor.lightness,
-            alpha = color.alpha
-        )
-    }
-
-    fun transform(colors: List<Color>): List<Color> {
-        return colors.map { color ->
-            transform(color)
         }
     }
 }

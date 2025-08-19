@@ -1,5 +1,6 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.util
 
+import com.osg.openanimation.core.ui.color.model.LottiePart
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject

@@ -1,5 +1,10 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.model
 
+import com.osg.openanimation.core.ui.color.util.findDeepPathsByKey
+import com.osg.openanimation.core.ui.color.util.findElementByPath
+import com.osg.openanimation.core.ui.color.util.replaceDeepChild
+import com.osg.openanimation.core.ui.color.util.toColorStopsVector
+import com.osg.openanimation.core.ui.color.util.toFloatArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json

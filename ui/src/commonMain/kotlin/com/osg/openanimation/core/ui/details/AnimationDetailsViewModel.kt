@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
-import com.osg.openanimation.core.ui.color.ColorsEditHandler
-import com.osg.openanimation.core.ui.color.ColorsEditPalette
+import com.osg.openanimation.core.ui.color.model.ColorsEditHandler
+import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository

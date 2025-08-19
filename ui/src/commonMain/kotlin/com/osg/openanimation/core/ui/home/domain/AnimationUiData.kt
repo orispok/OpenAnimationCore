@@ -2,7 +2,7 @@ package com.osg.openanimation.core.ui.home.domain
 
 import androidx.compose.runtime.Immutable
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import com.osg.openanimation.core.ui.color.ColorsEditPalette
+import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 
 @Immutable

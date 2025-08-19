@@ -1,5 +1,6 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.model
 
+import com.osg.openanimation.core.ui.color.util.parseGradientColorStops
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException

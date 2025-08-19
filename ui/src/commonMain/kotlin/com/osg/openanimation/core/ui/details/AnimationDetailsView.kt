@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import com.osg.openanimation.core.ui.color.ColorPaletteOptionsView
+import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.license.description
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData

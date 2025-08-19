@@ -1,6 +1,7 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.model
 
 import androidx.compose.ui.graphics.Color
+import com.osg.openanimation.core.ui.color.util.PathParts
 
 sealed interface PaintNode {
     val path: PathParts

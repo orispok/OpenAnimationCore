@@ -1,4 +1,4 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.util
 
 import androidx.compose.ui.graphics.Color
 import kotlin.math.pow

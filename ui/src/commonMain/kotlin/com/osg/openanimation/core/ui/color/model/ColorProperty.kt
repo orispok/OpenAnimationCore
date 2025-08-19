@@ -1,8 +1,7 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
-import com.osg.openanimation.core.ui.color.ColorProperty.Animated
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -74,7 +73,7 @@ object ColorPropertySerializer : KSerializer<ColorProperty> {
                 put("k", JsonArray(value.k.map { JsonPrimitive(it) }))
             }
 
-            is Animated -> buildJsonObject {
+            is ColorProperty.Animated -> buildJsonObject {
                 put(
                     "k",
                     JsonArray(value.k.map {
@@ -108,7 +107,7 @@ object ColorPropertySerializer : KSerializer<ColorProperty> {
                             it
                         )
                     }
-                    Animated(
+                    ColorProperty.Animated(
                         frames,
                         a = element["a"]?.jsonPrimitive?.intOrNull,
                         ix = element["ix"]?.jsonPrimitive?.intOrNull,

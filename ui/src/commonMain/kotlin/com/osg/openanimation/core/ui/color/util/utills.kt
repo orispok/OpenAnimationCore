@@ -1,7 +1,8 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.util
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastCoerceIn
+import com.osg.openanimation.core.ui.color.ui.roundTo
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

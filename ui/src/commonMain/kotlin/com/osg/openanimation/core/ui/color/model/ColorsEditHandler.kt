@@ -1,6 +1,8 @@
-package com.osg.openanimation.core.ui.color
+package com.osg.openanimation.core.ui.color.model
 
 import androidx.compose.ui.graphics.Color
+import com.osg.openanimation.core.ui.color.util.getKMostDifferentColors
+import com.osg.openanimation.core.ui.color.util.toHsl
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import kotlinx.coroutines.CoroutineScope

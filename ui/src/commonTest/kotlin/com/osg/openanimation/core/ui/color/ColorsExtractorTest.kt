@@ -1,5 +1,6 @@
 package com.osg.openanimation.core.ui.color
 
+import com.osg.openanimation.core.ui.color.model.extractColorsFromJson
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
