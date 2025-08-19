@@ -69,16 +69,16 @@ class ColorsEditHandler(
 
     private val transformOptions = animationDataFlow.map { colorNodes ->
         val colorNodes = extractColorsFromJson(colorNodes)
-        val grouped = colorNodes.associateBy {
-            Color(
-                red = it.color.red.roundTo(2),
-                green = it.color.green.roundTo(2),
-                blue = it.color.blue.roundTo(2),
-                alpha = it.color.alpha.roundTo(2)
-            )
-        }
+//        val grouped = colorNodes.associateBy {
+//            Color(
+//                red = it.color.red.roundTo(2),
+//                green = it.color.green.roundTo(2),
+//                blue = it.color.blue.roundTo(2),
+//                alpha = it.color.alpha.roundTo(2)
+//            )
+//        }
 
-        val colors = grouped.keys.toList()
+        val colors = colorNodes.map { it.color }.flatten().getKMostDifferentColors(5)
         OptionsWithColors(
             options = transformOptionsList.map { option ->
                 option.transform(colors).sortedBy {
