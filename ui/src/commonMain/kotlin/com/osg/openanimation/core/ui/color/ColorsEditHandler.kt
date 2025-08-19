@@ -20,7 +20,7 @@ data class ProcessedJson(
 
 data class OptionsWithColors(
     val options: List<List<Color>>,
-    val nodes: List<StaticColorNode>
+    val nodes: List<PaintNode>
 )
 
 
@@ -69,15 +69,6 @@ class ColorsEditHandler(
 
     private val transformOptions = animationDataFlow.map { colorNodes ->
         val colorNodes = extractColorsFromJson(colorNodes)
-//        val grouped = colorNodes.associateBy {
-//            Color(
-//                red = it.color.red.roundTo(2),
-//                green = it.color.green.roundTo(2),
-//                blue = it.color.blue.roundTo(2),
-//                alpha = it.color.alpha.roundTo(2)
-//            )
-//        }
-
         val colors = colorNodes.map { it.color }.flatten().getKMostDifferentColors(5)
         OptionsWithColors(
             options = transformOptionsList.map { option ->

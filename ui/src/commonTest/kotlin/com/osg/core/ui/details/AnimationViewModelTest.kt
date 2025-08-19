@@ -46,7 +46,7 @@ class TransformDeepByKeyTest {
     @Test
     fun testFindElementByPathNullRoot() {
         val nullJson: JsonElement? = null
-        val result = nullJson.findElementByPath(PathParts(listOf("any")))
+        val result = nullJson?.findElementByPath(PathParts(listOf("any")))
         assertEquals(null, result)
     }
 }
