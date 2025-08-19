@@ -1,6 +1,5 @@
 package com.osg.openanimation.core.ui.color
 
-import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -8,31 +7,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 
-
-data class LottiePart(
-    val key: String,
-    val name: String? = null,
-)
-
-sealed interface PaintNode {
-    val path: PathParts
-    val color: List<Color>
-    val name: String
-
-    data class ColorFill(
-        override val path: PathParts,
-        override val color: List<Color>,
-        val node: ColorProperty,
-        override val name: String,
-    ) : PaintNode
-
-    data class Gradient(
-        override val path: PathParts,
-        override val name: String,
-        val node: GradientProperty,
-        override val color: List<Color>
-    ) : PaintNode
-}
 
 suspend fun extractColorsFromJson(jsonString: String): List<PaintNode> {
     return withContext(Dispatchers.Default) {
@@ -56,94 +30,83 @@ suspend fun updateColorsInJson(
     }
 }
 
-fun Color.toFloatArray(): List<Float> {
-    return listOf(
-        red.roundTo(2),
-        green.roundTo(2),
-        blue.roundTo(2),
-        alpha.roundTo(2)
-    )
+private fun replaceColorFill(
+    paintNode: PaintNode.ColorFill,
+    transformOptions: TransformOptions
+): JsonElement {
+    val newChild = when (paintNode.node) {
+        is ColorProperty.Animated -> {
+            paintNode.node.copy(
+                k = paintNode.node.k.map { keyFrame ->
+                    keyFrame.copy(
+                        s = transformOptions.transform(keyFrame.s.toColor()!!)
+                            .toFloatArray(),
+                        e = keyFrame.e?.toColor()
+                            ?.let { transformOptions.transform(it).toFloatArray() }
+                            ?: keyFrame.e
+                    )
+                }
+            )
+        }
+        is ColorProperty.Static -> {
+            paintNode.node.copy(
+                k = transformOptions.transform(paintNode.node.k.toColor()!!).toFloatArray()
+            )
+        }
+    }
+    return Json.encodeToJsonElement(newChild)
+}
+
+private fun replaceGradient(
+    paintNode: PaintNode.Gradient,
+    transformOptions: TransformOptions
+): JsonElement {
+    val k = paintNode.node.k
+    val newChild = when (k) {
+        is GradientStops.Animated -> {
+            val newTransformedStops = paintNode.node.k.colorStops.map { colorStops ->
+                colorStops.map { colorStop ->
+                    colorStop.copy(
+                        color = transformOptions.transform(colorStop.color)
+                    )
+                }
+            }
+            paintNode.node.copy(
+                k = paintNode.node.k.copy(
+                    k = paintNode.node.k.k.zip(newTransformedStops) { it, stops ->
+                        it.copy(
+                            s = stops.toColorStopsVector()
+                        )
+                    }
+                )
+            )
+        }
+        is GradientStops.Static -> {
+            val transformedStops = paintNode.node.k.colorStops.map {
+                it.copy(color = transformOptions.transform(it.color))
+            }
+            paintNode.node.copy(
+                k = paintNode.node.k.copy(
+                    k = transformedStops.toColorStopsVector()
+                )
+            )
+        }
+    }
+    return Json.encodeToJsonElement(newChild)
 }
 
 fun JsonElement.replaceColor(
     paintNode: PaintNode,
     transformOptions: TransformOptions
 ): JsonElement {
-    val colorVecPath = paintNode.path.parts
-    return when (paintNode) {
-        is PaintNode.ColorFill -> {
-            val newChild = when (paintNode.node) {
-                is ColorProperty.Animated -> {
-                    paintNode.node.copy(
-                        k = paintNode.node.k.map { keyFrame ->
-                            keyFrame.copy(
-                                s = transformOptions.transform(keyFrame.s.toColor()!!)
-                                    .toFloatArray(),
-                                e = keyFrame.e?.toColor()
-                                    ?.let { transformOptions.transform(it).toFloatArray() }
-                                    ?: keyFrame.e
-                            )
-                        }
-                    )
-
-                }
-
-                is ColorProperty.Static -> {
-                    paintNode.node.copy(
-                        k = transformOptions.transform(paintNode.node.k.toColor()!!).toFloatArray()
-                    )
-                }
-            }
-
-            val jsonElement = Json.encodeToJsonElement(newChild)
-            replaceDeepChild(
-                parts = colorVecPath.map { it.key },
-                newChild = jsonElement
-            )
-        }
-
-        is PaintNode.Gradient -> {
-            val k = paintNode.node.k
-            val newChild = when (k) {
-                is GradientStops.Animated -> {
-                    val newTransformedStops = paintNode.node.k.colorStops.map { colorStops ->
-                        colorStops.map { colorStop ->
-                            colorStop.copy(
-                                color = transformOptions.transform(colorStop.color)
-                            )
-                        }
-                    }
-                    paintNode.node.copy(
-                        k = paintNode.node.k.copy(
-                            k = paintNode.node.k.k.zip(newTransformedStops) { it, stops ->
-                                it.copy(
-                                    s = stops.toColorStopsVector()
-                                )
-                            }
-                        )
-                    )
-
-                }
-
-                is GradientStops.Static -> {
-                    val transformedStops = paintNode.node.k.colorStops.map {
-                        it.copy(color = transformOptions.transform(it.color))
-                    }
-                    paintNode.node.copy(
-                        k = paintNode.node.k.copy(
-                            k = transformedStops.toColorStopsVector()
-                        )
-                    )
-                }
-            }
-
-            val jsonElement = Json.encodeToJsonElement(newChild)
-            replaceDeepChild(
-                parts = colorVecPath.map { it.key },
-                newChild = jsonElement
-            )
-        }
+    val jsonElement = when (paintNode) {
+        is PaintNode.ColorFill -> replaceColorFill(paintNode, transformOptions)
+        is PaintNode.Gradient -> replaceGradient(paintNode, transformOptions)
     }
+    return replaceDeepChild(
+        parts = paintNode.path.parts.map { it.key },
+        newChild = jsonElement
+    )
 }
 
 fun JsonElement.extractGradients(): List<PaintNode> {
@@ -203,5 +166,4 @@ fun JsonElement.extractColors(): List<PaintNode> {
         PaintNode.ColorFill(path = pathParts, color = colors, node = property, name = name)
     }
 }
-
 

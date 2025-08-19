@@ -16,19 +16,6 @@ data class HslColor(
 }
 
 
-//fun Color.luminance(): Float {
-//    fun channel(c: Float): Float {
-//        return if (c <= 0.03928f) c / 12.92f
-//        else ((c + 0.055f) / 1.055f).toDouble().pow(2.4).toFloat()
-//    }
-//
-//    val r = channel(red)
-//    val g = channel(green)
-//    val b = channel(blue)
-//
-//    return 0.2126f * r + 0.7152f * g + 0.0722f * b
-//}
-
 fun Color.toHsl(): HslColor {
     val max = max(red, max(green, blue))
     val min = min(red, min(green, blue))
@@ -62,5 +49,15 @@ fun Color.toHsl(): HslColor {
         saturation = s.fastCoerceIn(0f, 1f),
         lightness = l.fastCoerceIn(0f, 1f),
         alpha = alpha
+    )
+}
+
+
+fun Color.toFloatArray(): List<Float> {
+    return listOf(
+        red.roundTo(2),
+        green.roundTo(2),
+        blue.roundTo(2),
+        alpha.roundTo(2)
     )
 }

@@ -1,0 +1,23 @@
+package com.osg.openanimation.core.ui.color
+
+import androidx.compose.ui.graphics.Color
+
+sealed interface PaintNode {
+    val path: PathParts
+    val color: List<Color>
+    val name: String
+
+    data class ColorFill(
+        override val path: PathParts,
+        override val color: List<Color>,
+        val node: ColorProperty,
+        override val name: String,
+    ) : PaintNode
+
+    data class Gradient(
+        override val path: PathParts,
+        override val name: String,
+        val node: GradientProperty,
+        override val color: List<Color>
+    ) : PaintNode
+}
