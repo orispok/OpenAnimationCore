@@ -2,23 +2,36 @@
 
 package com.osg.openanimation.core.ui.details
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.osg.openanimation.core.data.animation.AnimationMetadata
+import com.osg.openanimation.core.ui.color.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.license.description
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.util.adaptive.isCompactWidth
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
 import com.osg.openanimation.core.ui.util.time.fromEpochToDayDateFormat
-import com.osg.openanimation.core.data.animation.AnimationMetadata
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -34,6 +47,7 @@ fun AnimationDetailsPanes(
     onDownloadClick: (AnimationMetadata) -> Unit,
     onDismissSignInDialog: () -> Unit,
     onTagClick: (String) -> Unit,
+    onPalletSelect: (Int) -> Unit,
 ) {
     if (isCompactWidth) {
         AnimationDetailsView(
@@ -43,6 +57,7 @@ fun AnimationDetailsPanes(
             onTagClick = onTagClick,
             onDownloadClick = onDownloadClick,
             onDismissSignInDialog = onDismissSignInDialog,
+            onPalletSelect = onPalletSelect
         )
     }else{
         Row(
@@ -56,6 +71,7 @@ fun AnimationDetailsPanes(
                 onTagClick = onTagClick,
                 onDownloadClick = onDownloadClick,
                 onDismissSignInDialog = onDismissSignInDialog,
+                onPalletSelect = onPalletSelect
             )
             RelatedAnimationsPane(
                 modifier = Modifier,
@@ -75,7 +91,8 @@ fun AnimationDetailsView(
     onDismissSignInDialog: () -> Unit,
     onLikeClick: (Boolean) -> Boolean,
     onDownloadClick: (AnimationMetadata) -> Unit,
-    onTagClick: (String) -> Unit
+    onTagClick: (String) -> Unit,
+    onPalletSelect: (Int) -> Unit,
 ) {
     detailsUiState.dialogToShow?.let { dialogType ->
         AnimationDialogTypeView(
@@ -104,13 +121,26 @@ fun AnimationDetailsView(
         val animationHeight = (containerSize.height * 0.6).roundToInt()
         AnimationCard(
             modifier = Modifier.height(animationHeight.pxToDp()),
-            animationState = detailsUiState.animationUiData.animationState,
+            animationState = detailsUiState.animationUiData.editableAnimation.processedJsonState,
         )
-        Text(
-            text = detailsUiState.animationUiData.metadata.name,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = detailsUiState.animationUiData.metadata.name,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier
+            )
+            ColorPaletteOptionsView(
+                modifier = Modifier.width(150.dp),
+                expanded = detailsUiState.animationUiData.editableAnimation.expanded,
+                transformOptions = detailsUiState.animationUiData.editableAnimation.options,
+                onPalletSelect = onPalletSelect
+            )
+        }
+
         FlowRow(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp),

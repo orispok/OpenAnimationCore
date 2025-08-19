@@ -4,25 +4,40 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.stats.AnimationStats
-import com.osg.openanimation.core.ui.components.lottie.toAnimationDataState
+import com.osg.openanimation.core.ui.color.ColorsEditHandler
+import com.osg.openanimation.core.ui.color.ColorsEditPalette
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
+import com.osg.openanimation.core.ui.home.domain.ColorPaletteWithMetadata
+import com.osg.openanimation.core.ui.home.model.toUiDataList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 data class AnimationAndRelated(
-    val animationUiData: AnimationUiData,
+    val animationUiData: ColorPaletteWithMetadata,
     val relatedAnimations: List<AnimationUiData>,
 )
 
 data class DetailsUiPane(
-    val animationUiData: AnimationUiData,
+    val animationUiData: ColorPaletteWithMetadata,
     val animationStats: AnimationStats,
     val dialogToShow: DialogType? = null,
     val isDownloadTransition: Boolean = false,
@@ -48,31 +63,68 @@ data class ButtonTransitionState(
 
 class AnimationDetailsViewModel(
     private val animationHash: String,
-): ViewModel(), KoinComponent {
+) : ViewModel(), KoinComponent {
     private val dataFetcher: AnimationContentLoader by inject()
     private val metaFetcher: AnimationMetadataRepository by inject()
     private val userRepository: UserRepository by inject()
     private val userActionRequestState = MutableStateFlow<DialogType?>(null)
     private val buttonTransitionState = MutableStateFlow(ButtonTransitionState())
 
+    private val metaSharedFlow = flow {
+        emit(metaFetcher.fetchMetaByHash(animationHash))
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        replay = 1
+    )
 
-    private val animationUiState : SharedFlow<AnimationAndRelated>  = flow {
-        val meta = metaFetcher.fetchMetaByHash(animationHash)
-        val relatedAnimations =  metaFetcher.fetchRelatedAnimations(
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val colorsEditHandler: SharedFlow<ColorsEditHandler> = metaSharedFlow.map {
+        val json = dataFetcher.fetchAnimationByPath(it.localFileName)
+        ColorsEditHandler(
+            animationContentLoader = { json },
+            scope = viewModelScope,
+            path = it.hash,
+        )
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        replay = 1
+    )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val colorsEditPalette: Flow<ColorsEditPalette> = colorsEditHandler.flatMapConcat { handler ->
+        handler.uiState
+    }
+    private val mainAnimationFlow = combine(
+        metaSharedFlow,
+        colorsEditPalette
+    ) { meta, animationData ->
+        ColorPaletteWithMetadata(
+            metadata = meta,
+            editableAnimation = animationData
+        )
+    }
+
+    private val relatedAnimationsUiFlow = metaSharedFlow.map { meta ->
+        val relatedAnimations = metaFetcher.fetchRelatedAnimations(
             animationMetadata = meta,
             count = 4
         )
-        emit(
-            AnimationAndRelated(
-                animationUiData = dataFetcher.toAnimationDataState(meta),
-                relatedAnimations = relatedAnimations.map(dataFetcher::toAnimationDataState)
-            )
+        relatedAnimations.toUiDataList(
+            dataFetcher
         )
-    }.shareIn(
-        replay = 1,
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000L),
-    )
+    }
+
+    private val animationUiState: Flow<AnimationAndRelated> = combine(
+        mainAnimationFlow,
+        relatedAnimationsUiFlow
+    ) { mainAnimation, relatedAnimations ->
+        AnimationAndRelated(
+            animationUiData = mainAnimation,
+            relatedAnimations = relatedAnimations
+        )
+    }
 
     private val userSharedFlow: StateFlow<UserSessionState> = userRepository.profileFlow
         .stateIn(
@@ -84,7 +136,7 @@ class AnimationDetailsViewModel(
     private val statsLikeFlow = combine(
         metaFetcher.animationStatsFlow(animationHash),
         userRepository.profileFlow
-    ){ stats, userSessionState ->
+    ) { stats, userSessionState ->
         val isLiked = when (userSessionState) {
             is UserSessionState.SignedIn -> userSessionState.favorites.contains(animationHash)
             UserSessionState.SignedOut -> false
@@ -95,13 +147,13 @@ class AnimationDetailsViewModel(
         )
     }
 
-    val uiState : StateFlow<DetailsScreenStates> = combine(
+    val uiState: StateFlow<DetailsScreenStates> = combine(
         animationUiState,
         userSharedFlow,
         statsLikeFlow,
         userActionRequestState,
         buttonTransitionState,
-    ) { animationAndRelated, loggedState, statsLike, dialogToShow, buttonTransitions->
+    ) { animationAndRelated, loggedState, statsLike, dialogToShow, buttonTransitions ->
         val details = DetailsUiPane(
             animationUiData = animationAndRelated.animationUiData,
             animationStats = statsLike.animationStats,
@@ -122,11 +174,12 @@ class AnimationDetailsViewModel(
 
     fun onLikeClick(nextLike: Boolean): Boolean {
         val currentUserState = userSharedFlow.value
-        return when(currentUserState){
+        return when (currentUserState) {
             is UserSessionState.SignedIn -> {
                 reactOnAnimation(nextLike = nextLike)
                 return nextLike
             }
+
             UserSessionState.SignedOut -> {
                 userActionRequestState.value = DialogType.SignInDialog
                 false
@@ -140,19 +193,19 @@ class AnimationDetailsViewModel(
         )
         viewModelScope.launch {
             val currentUserState = userSharedFlow.first()
-            when(currentUserState){
+            when (currentUserState) {
                 is UserSessionState.SignedIn -> {
                     val animationMeta = animationUiState.first().animationUiData
                     userActionRequestState.value = DialogType.Export.Success(
                         fileName = downloadRequest.downloadFileName(),
                         animationData = dataFetcher
                             .fetchAnimationByPath(animationMeta.metadata.localFileName)
-                            .decodeToString()
                     )
                     async {
                         userRepository.onUserDownload(animationMeta.metadata.hash)
                     }
                 }
+
                 UserSessionState.SignedOut -> {
                     userActionRequestState.value = DialogType.SignInDialog
                 }
@@ -166,11 +219,11 @@ class AnimationDetailsViewModel(
 
     private fun reactOnAnimation(
         nextLike: Boolean,
-    ){
+    ) {
         viewModelScope.launch {
             if (nextLike) {
                 userRepository.likeAnimation(animationHash)
-            }else{
+            } else {
                 userRepository.dislikeAnimation(animationHash)
             }
         }
@@ -178,6 +231,13 @@ class AnimationDetailsViewModel(
 
     fun onDismissSignInDialog() {
         userActionRequestState.value = null
+    }
+
+    fun onPalletSelect(index: Int) {
+        viewModelScope.launch {
+            val handler = colorsEditHandler.first()
+            handler.onSelectColorTransformOption(index)
+        }
     }
 }
 

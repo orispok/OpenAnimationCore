@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
+import com.osg.openanimation.core.ui.components.loading.animationResource
 import com.osg.openanimation.core.ui.components.lottie.LottieAnimationView
 import com.osg.openanimation.core.ui.di.SignInProviderFactory
 import com.osg.openanimation.core.ui.di.UserRepository
@@ -73,8 +73,8 @@ fun SignInReasoningContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val animationsState = AnimationDataState.fromResource(
-            "files/sign_in_first_animation.json"
+        val animationsState = animationResource(
+            "sign_in_first_animation.json"
         )
         LottieAnimationView(
             animationData = animationsState,

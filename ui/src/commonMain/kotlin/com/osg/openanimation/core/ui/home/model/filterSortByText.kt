@@ -1,10 +1,10 @@
 package com.osg.openanimation.core.ui.home.model
 
-import com.osg.openanimation.core.ui.di.data.FilterQueryType
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.data.FilterQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 
 fun Collection<AnimationMetadata>.filterSortByText(
@@ -44,12 +44,11 @@ fun List<AnimationMetadata>.toUiDataList(
     if (isEmpty()) return emptyList()
     return map {
         AnimationUiData(
-            animationState = AnimationDataState(
-                hash = it.hash,
-            ) {
+            animationState = AnimationDataState.LazyLoading(it.hash){
                 animationRepository.fetchAnimationByPath(it.localFileName)
             },
             metadata = it,
         )
     }
 }
+

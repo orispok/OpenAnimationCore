@@ -20,7 +20,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.components.bar.OpenNavigationWrapper
 import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
@@ -31,6 +30,7 @@ import com.osg.openanimation.core.ui.details.DetailsScreenStates
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.model.AnimationViewModel
 import com.osg.openanimation.core.ui.home.ui.AnimationGrid
@@ -151,6 +151,7 @@ fun AppGraph(
                                         Destination.AnimationDetails(animation.metadata.hash)
                                     )
                                 },
+                                onPalletSelect = detailsViewModel::onPalletSelect,
                             )
                         }
                     }

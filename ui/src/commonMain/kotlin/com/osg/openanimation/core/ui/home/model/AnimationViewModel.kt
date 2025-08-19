@@ -2,13 +2,13 @@ package com.osg.openanimation.core.ui.home.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.openanimation.core.ui.di.data.GuestQueryType
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
-import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.di.UserRepository
+import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.di.data.GuestQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow

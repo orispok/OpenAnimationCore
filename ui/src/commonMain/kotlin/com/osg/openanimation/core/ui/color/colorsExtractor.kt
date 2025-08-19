@@ -9,6 +9,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.float
@@ -16,7 +19,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 data class LottieProperty(
-    val a: Int,
+    val a: Int? = null,
     val k: JsonElement,
     val ix: Int? = null
 )
@@ -29,7 +32,9 @@ data class LottiePart(
 
 data class PathParts(
     val parts: List<LottiePart>,
-)
+){
+    companion object
+}
 
 data class StaticColorNode(
     val path: PathParts,
@@ -60,11 +65,36 @@ suspend fun extractColorsFromJson(jsonString: String): List<StaticColorNode> {
 
 suspend fun updateColorsInJson(
     jsonString: String,
-    colors: List<StaticColorNode>
+    colors: List<StaticColorNode>,
+    transformOptions: TransformOptions,
 ): String {
     return withContext(Dispatchers.Default) {
-        TODO()
+        var jsonElement = Json.parseToJsonElement(jsonString)
+        colors.forEach {
+            jsonElement = jsonElement.replaceColor(it, transformOptions)
+        }
+
+        return@withContext Json.encodeToString(jsonElement)
     }
+}
+
+fun JsonElement.replaceColor(
+    staticColorNode: StaticColorNode,
+    transformOptions: TransformOptions
+): JsonElement {
+    val newColor = transformOptions.transform(staticColorNode.color)
+    val newChild = buildJsonArray {
+        add(newColor.red.roundTo(2))
+        add(newColor.green.roundTo(2))
+        add(newColor.blue.roundTo(2))
+        add(newColor.alpha.roundTo(2))
+    }
+
+    val colorVecPath = staticColorNode.path.parts + LottiePart(key = "k", name = "Color")
+    return replaceDeepChild(
+        parts = colorVecPath.map { it.key },
+        newChild = newChild
+    )
 }
 
 fun JsonElement.extractColors(): List<StaticColorNode> {
@@ -74,7 +104,6 @@ fun JsonElement.extractColors(): List<StaticColorNode> {
         val property = try {
             Json.decodeFromJsonElement<LottieProperty>(element)
         } catch (e: Exception) {
-            println("Error decoding LottieProperty: $e")
             return@mapNotNull null
         }
         val color = property.staticColorOrNull() ?: return@mapNotNull null
@@ -142,4 +171,48 @@ fun JsonElement?.findElementByPath(pathParts: PathParts): JsonElement? {
     }
 
     return current
+}
+
+fun JsonElement?.replaceChild(childName: String, newChild: JsonElement): JsonElement {
+    return when (this) {
+        is JsonObject -> {
+            val newMap = this.toMutableMap()
+            newMap[childName] = newChild
+            JsonObject(newMap)
+        }
+        is JsonArray -> {
+            JsonArray(
+                this.toMutableList().apply {
+                    val index = childName.toInt()
+                    this[index] = newChild
+                }
+            )
+        }
+        else -> {
+            buildJsonObject {
+                put(childName, newChild)
+            }
+        }
+    }
+}
+
+//     A                        A
+//    /  \                     /  \
+//    B1  B2      == >;        B1  B2
+//    /    \                   /    \
+//   C3     C4                C3     C4*
+fun JsonElement?.replaceDeepChild(parts: List<String>, newChild: JsonElement): JsonElement {
+    return if (parts.size == 1) {
+        replaceChild(parts.first(), newChild)
+    } else {
+        val child = when (this) {
+            is JsonObject -> this[parts.first()]
+            is JsonArray -> this[parts.first().toInt()]
+            else -> null
+        }
+        replaceChild(
+            childName = parts.first(),
+            newChild = child.replaceDeepChild(parts.drop(1), newChild)
+        )
+    }
 }
