@@ -16,7 +16,7 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.float
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -111,7 +111,7 @@ object GradientStopsSerializer : KSerializer<GradientStops> {
             is JsonArray -> {
                 if (k.firstOrNull() is JsonObject) {
                     // Animated
-                    val frames = k.map { jsonDecoder.json.decodeFromJsonElement(GradientKeyFrame.serializer(), it) }
+                    val frames = jsonDecoder.json.decodeFromJsonElement<List<GradientKeyFrame>>(k)
                     GradientStops.Animated(
                         k = frames,
                         a = element["a"]?.jsonPrimitive?.int,
@@ -119,7 +119,7 @@ object GradientStopsSerializer : KSerializer<GradientStops> {
                     )
                 } else {
                     // Static
-                    val floats = k.map { it.jsonPrimitive.float }
+                    val floats = jsonDecoder.json.decodeFromJsonElement<List<Float>>(k)
                     GradientStops.Static(
                         k = floats,
                         a = element["a"]?.jsonPrimitive?.int

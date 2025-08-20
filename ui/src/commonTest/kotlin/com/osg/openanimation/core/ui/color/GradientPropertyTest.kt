@@ -6349,7 +6349,7 @@ class GradientPropertyTest {
         val jsonElement = Json.parseToJsonElement(sampleLottieJson)
         val res = jsonElement.extractGradients()
         assertEquals(4, res.size)
-        assertEquals(3 + 3 + 3 + 5, res.sumOf { it.color.size })
+        assertEquals(3 + 3 + 3 + 5, res.sumOf { it.colors.size })
 
     }
 

@@ -5,12 +5,12 @@ import com.osg.openanimation.core.ui.color.util.PathParts
 
 sealed interface PaintNode {
     val path: PathParts
-    val color: List<Color>
+    val colors: List<Color>
     val name: String
 
     data class ColorFill(
         override val path: PathParts,
-        override val color: List<Color>,
+        override val colors: List<Color>,
         val node: ColorProperty,
         override val name: String,
     ) : PaintNode
@@ -19,6 +19,6 @@ sealed interface PaintNode {
         override val path: PathParts,
         override val name: String,
         val node: GradientProperty,
-        override val color: List<Color>
+        override val colors: List<Color>
     ) : PaintNode
 }

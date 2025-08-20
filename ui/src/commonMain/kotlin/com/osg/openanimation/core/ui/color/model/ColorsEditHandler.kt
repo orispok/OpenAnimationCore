@@ -2,7 +2,6 @@ package com.osg.openanimation.core.ui.color.model
 
 import androidx.compose.ui.graphics.Color
 import com.osg.openanimation.core.ui.color.util.getKMostDifferentColors
-import com.osg.openanimation.core.ui.color.util.toHsl
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import kotlinx.coroutines.CoroutineScope
@@ -31,17 +30,26 @@ class ColorsEditHandler(
     private val path: String,
     private val scope: CoroutineScope,
 ){
-    private val transformOptionsList = List(12){
-        TransformOptions(
-            hueShift = (it * 30).toFloat(),
-            lightnessShift = if (it % 4 == 0) 0.1f else 0f
+    private val transformOptionsList by lazy {
+        val hueValues = listOf(
+            0f, 30f, 90f
         )
+        val chromaValues = listOf(
+            0f, 30f, 90f
+        )
+        buildList {
+            for (hue in hueValues) {
+                for (chroma in chromaValues) {
+                    add(TransformOptions(hueShift = hue, chromaShift = chroma))
+                }
+            }
+        }
     }
 
 
-    private val selectedOptionsState = MutableStateFlow(0)
+    private val selectedTransformOptionIndexState = MutableStateFlow(0)
 
-    private val animationDataFlow = flow {
+    private val sourceAnimationDataFlow = flow {
         emit(animationContentLoader.fetchAnimationByPath(path))
     }.shareIn(
         scope = scope,
@@ -50,11 +58,11 @@ class ColorsEditHandler(
     )
 
 
-    private val updatedJsonState = combine(
-        animationDataFlow,
-        selectedOptionsState
-    ) { animationData, selectedOptionIndex ->
-        if (selectedOptionIndex == 0) {
+    private val transformedAnimationJsonState = combine(
+        sourceAnimationDataFlow,
+        selectedTransformOptionIndexState
+    ) { animationData, selectedTransformOptionIndex ->
+        if (selectedTransformOptionIndex == 0) {
             ProcessedJson(
                 data = animationData,
                 transformOptionsIdx = 0
@@ -64,9 +72,9 @@ class ColorsEditHandler(
                 data = updateColorsInJson(
                     animationData,
                     extractColorsFromJson(animationData),
-                    transformOptionsList[selectedOptionIndex]
+                    transformOptionsList[selectedTransformOptionIndex]
                 ),
-                transformOptionsIdx = selectedOptionIndex
+                transformOptionsIdx = selectedTransformOptionIndex
             )
         }
     }.shareIn(
@@ -75,42 +83,40 @@ class ColorsEditHandler(
         replay = 1
     )
 
-    private val transformOptions = animationDataFlow.map { colorNodes ->
+    private val transformOptions = sourceAnimationDataFlow.map { colorNodes ->
         val colorNodes = extractColorsFromJson(colorNodes)
-        val colors = colorNodes.map { it.color }.flatten().getKMostDifferentColors(5)
+        val colors = colorNodes.map { it.colors }.flatten().getKMostDifferentColors(5)
         OptionsWithColors(
             options = transformOptionsList.map { option ->
-                option.transform(colors).sortedBy {
-                    it.toHsl().hue
-                }
+                option.transform(colors)
             },
             nodes = colorNodes
         )
     }
 
     suspend fun getProcessedJson(): String {
-        return updatedJsonState.first().data
+        return transformedAnimationJsonState.first().data
     }
 
     val uiState = combine(
         transformOptions,
-        selectedOptionsState,
-        updatedJsonState
-    ) { optionsWithColors, idx, updatedJson ->
-        val processedJsonState = if (idx == updatedJson.transformOptionsIdx) {
+        selectedTransformOptionIndexState,
+        transformedAnimationJsonState
+    ) { availableColorTransformations, selectedTransformOptionIndex, currentTransformedJson ->
+        val processedJsonState = if (selectedTransformOptionIndex == currentTransformedJson.transformOptionsIdx) {
             AnimationDataState.LazyLoading(
                 hash = path,
                 lazyLoader = {
-                    updatedJson.data
+                    currentTransformedJson.data
                 }
             )
         } else {
             AnimationDataState.Processing
         }
         ColorsEditPalette(
-            options = optionsWithColors.options,
+            options = availableColorTransformations.options,
             processedJsonState = processedJsonState,
-            selectedOptionIndex = idx,
+            selectedOptionIndex = selectedTransformOptionIndex,
         )
     }.stateIn(
         scope = scope,
@@ -118,7 +124,7 @@ class ColorsEditHandler(
         initialValue = ColorsEditPalette()
     )
 
-    fun onSelectColorTransformOption(index: Int){
-        selectedOptionsState.value = index
+    fun onSelectColorTransformOption(selectedOptionIndex: Int){
+        selectedTransformOptionIndexState.value = selectedOptionIndex
     }
 }

@@ -139,7 +139,7 @@ fun JsonElement.extractGradients(): List<PaintNode> {
             .joinToString(" > ")
             .ifEmpty { "Unnamed Color" }
 
-        PaintNode.Gradient(path = pathParts, color = color, node = property, name = name)
+        PaintNode.Gradient(path = pathParts, colors = color, node = property, name = name)
     }
 }
 
@@ -168,7 +168,7 @@ fun JsonElement.extractColors(): List<PaintNode> {
             .joinToString(" > ")
             .ifEmpty { "Unnamed Color" }
 
-        PaintNode.ColorFill(path = pathParts, color = colors, node = property, name = name)
+        PaintNode.ColorFill(path = pathParts, colors = colors, node = property, name = name)
     }
 }
 

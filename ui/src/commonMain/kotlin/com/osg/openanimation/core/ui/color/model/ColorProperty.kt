@@ -58,34 +58,45 @@ data class ColorKeyFrame(
     val e: List<Float>? = null,
 )
 
-
 object ColorPropertySerializer : KSerializer<ColorProperty> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ColorProperty") {
         element<JsonElement>("k")
+        element<Int?>("a", isOptional = true)
+        element<Int?>("ix", isOptional = true)
+        element<JsonElement?>("x", isOptional = true)
+        element<JsonElement?>("sid", isOptional = true)
     }
 
     override fun serialize(encoder: Encoder, value: ColorProperty) {
         val jsonEncoder = encoder as? JsonEncoder
             ?: throw SerializationException("ColorPropertySerializer can only be used with JSON")
 
-        val jsonObject = when (value) {
-            is ColorProperty.Static -> buildJsonObject {
-                put("k", JsonArray(value.k.map { JsonPrimitive(it) }))
-            }
 
-            is ColorProperty.Animated -> buildJsonObject {
-                put(
-                    "k",
-                    JsonArray(value.k.map {
-                        jsonEncoder.json.encodeToJsonElement(
-                            ColorKeyFrame.serializer(),
-                            it
-                        )
-                    })
-                )
+
+        val finalObject = buildJsonObject {
+            value.a?.let { put("a", JsonPrimitive(it)) }
+            value.ix?.let { put("ix", JsonPrimitive(it)) }
+            value.x?.let { put("x", it) }
+            value.sid?.let { put("sid", it) }
+            when (value) {
+                is ColorProperty.Static -> {
+                    put("k", JsonArray(value.k.map { JsonPrimitive(it) }))
+                }
+
+                is ColorProperty.Animated -> {
+                    put(
+                        "k",
+                        JsonArray(value.k.map {
+                            jsonEncoder.json.encodeToJsonElement(
+                                ColorKeyFrame.serializer(),
+                                it
+                            )
+                        })
+                    )
+                }
             }
         }
-        jsonEncoder.encodeJsonElement(jsonObject)
+        jsonEncoder.encodeJsonElement(finalObject)
     }
 
     override fun deserialize(decoder: Decoder): ColorProperty {
@@ -99,7 +110,9 @@ object ColorPropertySerializer : KSerializer<ColorProperty> {
 
         return when (k) {
             is JsonArray -> {
-                if (k.firstOrNull() is JsonObject) {
+                // It's safer to check for an empty array first.
+                // An empty keyframe array should result in an Animated type.
+                if (k.isEmpty() || k.first() is JsonObject) {
                     // animated
                     val frames = k.map {
                         jsonDecoder.json.decodeFromJsonElement(
@@ -131,7 +144,6 @@ object ColorPropertySerializer : KSerializer<ColorProperty> {
         }
     }
 }
-
 
 fun List<Float>.toColor(): Color? {
     if (size != 4) return null
