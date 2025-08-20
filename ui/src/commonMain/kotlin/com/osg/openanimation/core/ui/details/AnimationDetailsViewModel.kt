@@ -198,8 +198,7 @@ class AnimationDetailsViewModel(
                     val animationMeta = animationUiState.first().animationUiData
                     userActionRequestState.value = DialogType.Export.Success(
                         fileName = downloadRequest.downloadFileName(),
-                        animationData = dataFetcher
-                            .fetchAnimationByPath(animationMeta.metadata.localFileName)
+                        animationData = colorsEditHandler.first().getProcessedJson()
                     )
                     async {
                         userRepository.onUserDownload(animationMeta.metadata.hash)

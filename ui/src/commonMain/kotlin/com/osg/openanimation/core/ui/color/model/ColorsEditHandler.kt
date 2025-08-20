@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
@@ -68,7 +69,11 @@ class ColorsEditHandler(
                 transformOptionsIdx = selectedOptionIndex
             )
         }
-    }
+    }.shareIn(
+        scope = scope,
+        started = SharingStarted.Companion.WhileSubscribed(5000),
+        replay = 1
+    )
 
     private val transformOptions = animationDataFlow.map { colorNodes ->
         val colorNodes = extractColorsFromJson(colorNodes)
@@ -81,6 +86,10 @@ class ColorsEditHandler(
             },
             nodes = colorNodes
         )
+    }
+
+    suspend fun getProcessedJson(): String {
+        return updatedJsonState.first().data
     }
 
     val uiState = combine(
