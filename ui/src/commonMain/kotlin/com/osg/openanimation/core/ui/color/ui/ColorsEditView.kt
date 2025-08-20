@@ -1,9 +1,7 @@
 package com.osg.openanimation.core.ui.color.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -36,31 +34,10 @@ fun ColorPaletteOptionsView(
     onPalletSelect: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Column(
+    Box(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (expanded) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-            ) {
-                transformOptions.forEachIndexed { index, it ->
-                    DropdownMenuItem(
-                        text = {
-                            ColorPaletteView(
-                                modifier = Modifier,
-                                transformedColors = it,
-                            )
-                        },
-                        onClick = {
-                            onPalletSelect(index)
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        } else if (transformOptions.isNotEmpty()) {
+        if (transformOptions.isNotEmpty()) {
             Row(
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
@@ -73,6 +50,27 @@ fun ColorPaletteOptionsView(
                     expanded = true
                 }) {
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "More options")
+                }
+            }
+            if (expanded) {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    transformOptions.forEachIndexed { index, it ->
+                        DropdownMenuItem(
+                            text = {
+                                ColorPaletteView(
+                                    modifier = Modifier,
+                                    transformedColors = it,
+                                )
+                            },
+                            onClick = {
+                                onPalletSelect(index)
+                                expanded = false
+                            }
+                        )
+                    }
                 }
             }
         }

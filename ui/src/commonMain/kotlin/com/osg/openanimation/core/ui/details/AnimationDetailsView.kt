@@ -128,7 +128,6 @@ fun AnimationDetailsView(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = detailsUiState.animationUiData.metadata.name,
