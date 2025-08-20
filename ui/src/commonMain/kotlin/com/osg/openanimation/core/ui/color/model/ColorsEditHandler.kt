@@ -32,10 +32,10 @@ class ColorsEditHandler(
 ){
     private val transformOptionsList by lazy {
         val hueValues = listOf(
-            0f, 30f, 90f
+            0f, 60f, 180f, 240f
         )
         val chromaValues = listOf(
-            0f, 30f, 90f
+            0f, 60f, 120f
         )
         buildList {
             for (hue in hueValues) {
