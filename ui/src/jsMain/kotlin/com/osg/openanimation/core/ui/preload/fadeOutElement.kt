@@ -1,11 +1,9 @@
+
 import kotlinx.browser.document
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.AddEventListenerOptions
+import org.w3c.dom.HTMLElement
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(DelicateCoroutinesApi::class)

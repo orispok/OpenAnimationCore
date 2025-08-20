@@ -134,9 +134,9 @@ fun AnimationDetailsView(
                 modifier = Modifier
             )
             ColorPaletteOptionsView(
-                modifier = Modifier.width(150.dp),
-                expanded = detailsUiState.animationUiData.editableAnimation.expanded,
+                modifier = Modifier.width(120.dp),
                 transformOptions = detailsUiState.animationUiData.editableAnimation.options,
+                selectedIndex = detailsUiState.animationUiData.editableAnimation.selectedOptionIndex,
                 onPalletSelect = onPalletSelect
             )
         }

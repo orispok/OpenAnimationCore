@@ -16,6 +16,10 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,10 +31,11 @@ import kotlin.math.roundToInt
 @Composable
 fun ColorPaletteOptionsView(
     modifier: Modifier = Modifier,
-    expanded: Boolean,
     transformOptions: List<List<Color>>,
+    selectedIndex: Int,
     onPalletSelect: (Int) -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -38,7 +43,7 @@ fun ColorPaletteOptionsView(
         if (expanded) {
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { onPalletSelect(0)}
+                onDismissRequest = { expanded = false },
             ) {
                 transformOptions.forEachIndexed { index, it ->
                     DropdownMenuItem(
@@ -50,20 +55,23 @@ fun ColorPaletteOptionsView(
                         },
                         onClick = {
                             onPalletSelect(index)
+                            expanded = false
                         }
                     )
                 }
             }
-        } else {
+        } else if (transformOptions.isNotEmpty()) {
             Row(
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ColorPaletteView(
                     modifier = Modifier.weight(1f),
-                    transformedColors = transformOptions.firstOrNull() ?: emptyList(),
+                    transformedColors = transformOptions[selectedIndex],
                 )
-                IconButton(onClick = { onPalletSelect(0) }) {
+                IconButton(onClick = {
+                    expanded = true
+                }) {
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "More options")
                 }
             }
@@ -89,7 +97,7 @@ fun ColorPaletteView(
                 )
                 Box(
                     modifier = Modifier
-                        .height(24.dp)
+                        .height(18.dp)
                         .weight(1f)
                         .background(colorNode)
                 )

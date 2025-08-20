@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 data class ProcessedJson(
     val data: String,
@@ -32,10 +31,12 @@ class ColorsEditHandler(
     private val scope: CoroutineScope,
 ){
     private val transformOptionsList = List(12){
-        TransformOptions(hueShift = (it * 30).toFloat())
+        TransformOptions(
+            hueShift = (it * 30).toFloat(),
+            lightnessShift = if (it % 4 == 0) 0.1f else 0f
+        )
     }
 
-    private val expandedState = MutableStateFlow(false)
 
     private val selectedOptionsState = MutableStateFlow(0)
 
@@ -84,10 +85,9 @@ class ColorsEditHandler(
 
     val uiState = combine(
         transformOptions,
-        expandedState,
         selectedOptionsState,
         updatedJsonState
-    ) { optionsWithColors, expanded, idx, updatedJson ->
+    ) { optionsWithColors, idx, updatedJson ->
         val processedJsonState = if (idx == updatedJson.transformOptionsIdx) {
             AnimationDataState.LazyLoading(
                 hash = path,
@@ -100,8 +100,8 @@ class ColorsEditHandler(
         }
         ColorsEditPalette(
             options = optionsWithColors.options,
-            expanded = expanded,
-            processedJsonState = processedJsonState
+            processedJsonState = processedJsonState,
+            selectedOptionIndex = idx,
         )
     }.stateIn(
         scope = scope,
@@ -110,13 +110,6 @@ class ColorsEditHandler(
     )
 
     fun onSelectColorTransformOption(index: Int){
-        scope.launch {
-            if(index == 0) {
-                expandedState.value = !expandedState.value
-            }else{
-                selectedOptionsState.value = index
-                expandedState.value = false
-            }
-        }
+        selectedOptionsState.value = index
     }
 }
