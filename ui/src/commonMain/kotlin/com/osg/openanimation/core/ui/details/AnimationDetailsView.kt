@@ -28,6 +28,8 @@ import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.license.description
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
+import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
+import com.osg.openanimation.core.ui.details.model.ds.DetailsUiPane
 import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.util.adaptive.isCompactWidth
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp

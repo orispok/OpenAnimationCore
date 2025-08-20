@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class GradientPropertyTest {
     private val sampleLottieJson = """
@@ -6364,6 +6365,6 @@ class GradientPropertyTest {
             colors = res,
             transformOptions = TransformOptions(hueShift = 50f)
         )
-        println(replaceColorRes)
+        assertTrue { replaceColorRes.isNotEmpty() }
     }
 }

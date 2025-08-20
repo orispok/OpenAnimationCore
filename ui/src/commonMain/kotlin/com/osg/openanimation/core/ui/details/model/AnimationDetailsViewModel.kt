@@ -1,20 +1,23 @@
-package com.osg.openanimation.core.ui.details
+package com.osg.openanimation.core.ui.details.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import com.osg.openanimation.core.data.stats.AnimationStats
 import com.osg.openanimation.core.ui.color.model.ColorsEditHandler
 import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
+import com.osg.openanimation.core.ui.details.DialogType
+import com.osg.openanimation.core.ui.details.model.ds.AnimationAndRelated
+import com.osg.openanimation.core.ui.details.model.ds.ButtonTransitionState
+import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
+import com.osg.openanimation.core.ui.details.model.ds.DetailsUiPane
+import com.osg.openanimation.core.ui.details.model.ds.LikeStatsData
 import com.osg.openanimation.core.ui.di.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.home.domain.ColorPaletteWithMetadata
 import com.osg.openanimation.core.ui.home.model.toUiDataList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,36 +33,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-data class AnimationAndRelated(
-    val animationUiData: ColorPaletteWithMetadata,
-    val relatedAnimations: List<AnimationUiData>,
-)
-
-data class DetailsUiPane(
-    val animationUiData: ColorPaletteWithMetadata,
-    val animationStats: AnimationStats,
-    val dialogToShow: DialogType? = null,
-    val isDownloadTransition: Boolean = false,
-    val isLiked: Boolean = false,
-)
-
-data class LikeStatsData(
-    val animationStats: AnimationStats,
-    val isLiked: Boolean,
-)
-
-sealed interface DetailsScreenStates {
-    data object Loading : DetailsScreenStates
-    data class Success(
-        val detailsUiPane: DetailsUiPane,
-        val relatedAnimations: List<AnimationUiData>,
-    ) : DetailsScreenStates
-}
-
-data class ButtonTransitionState(
-    val isDownloadTransition: Boolean = false,
-)
 
 class AnimationDetailsViewModel(
     private val animationHash: String,
@@ -200,7 +173,7 @@ class AnimationDetailsViewModel(
                         fileName = downloadRequest.downloadFileName(),
                         animationData = animationColorsEditHandlerFlow.first().getProcessedJson()
                     )
-                    async {
+                    launch {
                         userRepository.onUserDownload(animationMeta.metadata.hash)
                     }
                 }
@@ -243,3 +216,4 @@ class AnimationDetailsViewModel(
 fun AnimationMetadata.downloadFileName(): String {
     return name.replace(" ", "_").lowercase() + ".json"
 }
+

@@ -25,8 +25,8 @@ import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialogView
 import com.osg.openanimation.core.ui.details.AnimationDetailsPanes
-import com.osg.openanimation.core.ui.details.AnimationDetailsViewModel
-import com.osg.openanimation.core.ui.details.DetailsScreenStates
+import com.osg.openanimation.core.ui.details.model.AnimationDetailsViewModel
+import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
