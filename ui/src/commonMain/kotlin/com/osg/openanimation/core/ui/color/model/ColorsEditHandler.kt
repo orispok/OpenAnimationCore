@@ -87,8 +87,12 @@ class ColorsEditHandler(
         val colorNodes = extractColorsFromJson(colorNodes)
         val colors = colorNodes.map { it.colors }.flatten().getKMostDifferentColors(5)
         OptionsWithColors(
-            options = transformOptionsList.map { option ->
-                option.transform(colors)
+            options = if (colors.isNotEmpty()){
+                transformOptionsList.map { option ->
+                    option.transform(colors)
+                }
+            }else{
+                emptyList()
             },
             nodes = colorNodes
         )

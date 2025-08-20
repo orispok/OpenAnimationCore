@@ -159,7 +159,9 @@ fun JsonElement.extractColors(): List<PaintNode> {
             }
 
             is ColorProperty.Static -> {
-                listOfNotNull(property.k.toColor())
+                listOf(
+                    property.k.toColor() ?: return@mapNotNull null
+                )
             }
         }
         val name = pathParts.parts

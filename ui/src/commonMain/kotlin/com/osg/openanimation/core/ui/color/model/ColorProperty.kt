@@ -146,12 +146,12 @@ object ColorPropertySerializer : KSerializer<ColorProperty> {
 }
 
 fun List<Float>.toColor(): Color? {
-    if (size != 4) return null
+    if (size < 3) return null // Ensure there are at least 3 components for RGB
     return Color(
         red = this[0],
         green = this[1],
         blue = this[2],
-        alpha = this[3],
+        alpha = this.getOrNull(3) ?: 1f,
         colorSpace = ColorSpaces.Srgb
     )
 }
