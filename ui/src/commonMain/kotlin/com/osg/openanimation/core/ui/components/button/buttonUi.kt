@@ -3,17 +3,20 @@ package com.osg.openanimation.core.ui.components.button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import com.osg.openanimation.core.ui.di.data.Dashboard
+import com.osg.openanimation.core.ui.di.data.RailDestination
 import com.osg.openanimation.core.ui.di.data.SelectedQueryType
-import com.osg.openanimation.core.ui.graph.NavigationUiItem
-import com.osg.openanimation.core.ui.util.icons.Explore
-import com.osg.openanimation.core.ui.util.icons.TrendingUp
 import com.osg.openanimation.core.ui.generated.resources.Res
 import com.osg.openanimation.core.ui.generated.resources.explore
 import com.osg.openanimation.core.ui.generated.resources.liked
-import com.osg.openanimation.core.ui.generated.resources.trending
+import com.osg.openanimation.core.ui.generated.resources.*
+import com.osg.openanimation.core.ui.graph.NavigationUiItem
+import com.osg.openanimation.core.ui.util.icons.Explore
+import com.osg.openanimation.core.ui.util.icons.TrendingUp
+import com.osg.openanimation.core.ui.util.icons.Workspaces
 
 
-val SelectedQueryType.ExploreCategory.buttonUi: NavigationUiItem
+val RailDestination.buttonUi: NavigationUiItem
     get() = when (this) {
         SelectedQueryType.ExploreCategory.Trending -> NavigationUiItem(
             iconOutline = Icons.AutoMirrored.Filled.TrendingUp,
@@ -29,5 +32,11 @@ val SelectedQueryType.ExploreCategory.buttonUi: NavigationUiItem
             iconOutline = Icons.Outlined.FavoriteBorder,
             iconFilled = Icons.Filled.Favorite,
             stringResource = Res.string.liked,
+        )
+
+        Dashboard -> NavigationUiItem(
+            iconOutline = Icons.Outlined.Workspaces,
+            iconFilled = Icons.Filled.Workspaces,
+            stringResource = Res.string.dashboard,
         )
     }

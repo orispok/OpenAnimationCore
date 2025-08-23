@@ -8,7 +8,9 @@ import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
 import com.osg.openanimation.core.ui.di.data.GuestQueryType
 import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.data.SelectedQueryType.Tag
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
+import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates.Success
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -46,11 +48,11 @@ class AnimationViewModel(
         return when (queryType) {
             is GuestQueryType -> {
                 val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE).toUiDataList(animationContentLoader)
-                return ExploreScreenStates.Success(
+                return Success(
                     animations = animations,
                     selected = queryType,
                     categories = animationMetaRepo.fetchTags().map {
-                        SelectedQueryType.Tag(it)
+                        Tag(it)
                     }
                 )
             }
@@ -59,11 +61,11 @@ class AnimationViewModel(
                     val animations = userSessionState.favorites
                         .map { animationMetaRepo.fetchMetaByHash(it) }
                         .toUiDataList(animationContentLoader)
-                    return ExploreScreenStates.Success(
+                    return Success(
                         animations = animations,
                         selected = queryType,
                         categories = animationMetaRepo.fetchTags().map {
-                            SelectedQueryType.Tag(it)
+                            Tag(it)
                         }
                     )
                 } else {

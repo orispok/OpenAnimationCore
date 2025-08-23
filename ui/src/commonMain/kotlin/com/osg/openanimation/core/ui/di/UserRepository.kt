@@ -2,7 +2,7 @@
 
 package com.osg.openanimation.core.ui.di
 
-import com.osg.openanimation.core.data.use.UserProfile
+import com.osg.openanimation.core.data.user.UserProfile
 import com.osg.openanimation.core.ui.components.signin.SignInResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

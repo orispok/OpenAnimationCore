@@ -1,5 +1,6 @@
-package com.osg.openanimation.core.data.use
+package com.osg.openanimation.core.data.user
 
+import com.osg.openanimation.core.data.use.UserRole
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -29,7 +29,6 @@ sealed interface Destination{
     data class AnimationDetails(
         val hash: String,
     ): Destination
-
 }
 
 

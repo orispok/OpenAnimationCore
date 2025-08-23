@@ -24,12 +24,15 @@ import com.osg.openanimation.core.ui.components.bar.OpenNavigationWrapper
 import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialogView
+import com.osg.openanimation.core.ui.dashboard.DashboardView
+import com.osg.openanimation.core.ui.dashboard.model.DashboardViewModel
 import com.osg.openanimation.core.ui.details.AnimationDetailsPanes
 import com.osg.openanimation.core.ui.details.model.AnimationDetailsViewModel
 import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
 import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.UserRepository
 import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.di.data.Dashboard
 import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.model.AnimationViewModel
@@ -53,7 +56,14 @@ fun AppGraph(
         currentDestination = currentDestination ,
         onRailDst = {
             navController.navigate(
-                Destination.Home(it)
+                when(it){
+                    Dashboard -> {
+                        Dashboard
+                    }
+                    is SelectedQueryType -> {
+                        Destination.Home(it)
+                    }
+                }
             )
         },
     ) {
@@ -156,6 +166,17 @@ fun AppGraph(
                         }
                     }
 
+                }
+
+                composable<Dashboard> { backStackEntry ->
+                    val dashboardViewModel = viewModel { DashboardViewModel() }
+                    val uiState by dashboardViewModel.uiState.collectAsState()
+                    DashboardView(
+                        dashboardUiState = uiState,
+                        onFileDropped = dashboardViewModel::onFileDropped,
+                        onAnimationClick = dashboardViewModel::onAnimationClick,
+
+                    )
                 }
             }
 

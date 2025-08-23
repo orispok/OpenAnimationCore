@@ -6,5 +6,8 @@ import kotlinx.serialization.Serializable
 data class UploadedAnimation(
     val animationId: String,
     val uploadTimestamp: Long,
-    val moderationStatus: ModerationStatus
+    val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
+    val title: String,
+    val description: String,
+    val tags: List<String> = emptyList(),
 )
