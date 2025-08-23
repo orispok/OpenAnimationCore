@@ -22,6 +22,14 @@ interface UserRepository{
     suspend fun onUserDownload(hash: String)
     suspend fun likeAnimation(hash: String)
     suspend fun dislikeAnimation(hash: String)
+
+    suspend fun uploadAnimation(
+        title: String,
+        description: String,
+        tags: List<String>,
+        animationData: ByteArray,
+    )
+
     fun onUserSignOut()
     fun onRegistered(signInResultState: Result<SignInResult>)
 }
