@@ -1,6 +1,7 @@
-package com.osg.openanimation.core.ui.di
+package com.osg.openanimation.core.ui.di.domain
 
 import androidx.compose.runtime.compositionLocalOf
+import com.osg.openanimation.core.ui.graph.Dashboard
 import com.osg.openanimation.core.ui.graph.Destination
 
 data class AppLinkProvider(
@@ -19,6 +20,8 @@ data class AppLinkProvider(
                 val serialName = Destination.AnimationDetails.serializer().descriptor.serialName
                 "$serialName/${destination.hash}"
             }
+
+            Dashboard -> Dashboard.serializer().descriptor.serialName
         }
         return "$hostUrl/#$destinationPath"
     }

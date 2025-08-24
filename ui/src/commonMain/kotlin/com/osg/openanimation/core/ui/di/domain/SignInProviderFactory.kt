@@ -1,4 +1,4 @@
-package com.osg.openanimation.core.ui.di
+package com.osg.openanimation.core.ui.di.domain
 
 import com.osg.openanimation.core.ui.components.signin.SignInProvider
 

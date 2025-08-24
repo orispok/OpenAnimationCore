@@ -1,23 +1,34 @@
 package com.osg.openanimation.core.ui
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
-import com.osg.openanimation.core.ui.di.*
+import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.AnimationInitialUpload
+import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
+import com.osg.openanimation.core.ui.di.domain.AppLinkProvider
+import com.osg.openanimation.core.ui.di.domain.ReportSubmissionService
+import com.osg.openanimation.core.ui.di.domain.SignInProviderFactory
+import com.osg.openanimation.core.ui.di.domain.UserRepository
+import com.osg.openanimation.core.ui.di.model.viewModelModule
 import com.osg.openanimation.core.ui.graph.AppGraph
 import com.osg.openanimation.core.ui.theme.TrueTheme
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
+import org.koin.core.definition.Definition
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.parameter.ParametersHolder
-import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 class BaseApp(
-    metadataRepository: Scope.(ParametersHolder) -> AnimationMetadataRepository,
-    userRepository: Scope.(ParametersHolder) -> UserRepository,
-    dataFetcher: Scope.(ParametersHolder) -> AnimationContentLoader,
-    reportHandlerLoader: Scope.(ParametersHolder) -> ReportSubmissionService,
+    metadataRepository: Definition<AnimationMetadataRepository>,
+    userRepository: Definition<UserRepository>,
+    dataFetcher: Definition<AnimationContentLoader>,
+    reportHandlerLoader: Definition<ReportSubmissionService>,
+    animationInitialUpload: Definition<AnimationInitialUpload>,
     signInLoader: () -> SignInProviderFactory,
     baseUrl: String,
     platformModules : List<Module> = emptyList()
@@ -36,10 +47,13 @@ class BaseApp(
             single<ReportSubmissionService>(
                 definition = reportHandlerLoader
             )
+            single<AnimationInitialUpload>(
+                definition = animationInitialUpload
+            )
             single<AppLinkProvider> { AppLinkProvider(baseUrl) }
             singleOf<SignInProviderFactory>(signInLoader)
         }
-        val allModules = platformModules + mediaModule
+        val allModules = platformModules + mediaModule + viewModelModule
         startKoin {
             modules(allModules)
         }

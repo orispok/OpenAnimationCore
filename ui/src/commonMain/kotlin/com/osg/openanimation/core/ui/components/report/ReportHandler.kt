@@ -2,7 +2,7 @@ package com.osg.openanimation.core.ui.components.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.openanimation.core.ui.di.ReportSubmissionService
+import com.osg.openanimation.core.ui.di.domain.ReportSubmissionService
 import com.osg.openanimation.core.data.report.ReportSubmission
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

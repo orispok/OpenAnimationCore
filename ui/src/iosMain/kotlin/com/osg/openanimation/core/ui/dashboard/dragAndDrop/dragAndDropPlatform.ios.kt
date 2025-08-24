@@ -6,6 +6,6 @@ import androidx.compose.ui.draganddrop.DragAndDropTarget
 
 
 
-actual fun resolveDroppedText(event: DragAndDropEvent): String? {
+actual suspend fun resolveDroppedContent(event: DragAndDropEvent): String? {
     TODO("Not yet implemented")
 }

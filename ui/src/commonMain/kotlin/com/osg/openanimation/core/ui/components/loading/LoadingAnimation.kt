@@ -20,13 +20,12 @@ fun LoadingAnimation(
     )
 }
 
-@Composable
 fun animationResource(
     fileName: String,
 ): AnimationDataState.LazyLoading{
     return AnimationDataState.LazyLoading(
         fileName,
     ){
-        Res.readBytes(fileName).decodeToString()
+        Res.readBytes("files/$fileName").decodeToString()
     }
 }

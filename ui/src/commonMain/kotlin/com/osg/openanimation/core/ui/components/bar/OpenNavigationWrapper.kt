@@ -34,10 +34,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.osg.openanimation.core.ui.components.button.buttonUi
-import com.osg.openanimation.core.ui.di.LocalLinkProvider
-import com.osg.openanimation.core.ui.di.data.RailDestination
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.domain.LocalLinkProvider
+import com.osg.openanimation.core.ui.graph.Dashboard
 import com.osg.openanimation.core.ui.graph.Destination
+import com.osg.openanimation.core.ui.graph.RailDestination
 import com.osg.openanimation.core.ui.theme.component.DarkLightSwitch
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
 import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
@@ -129,13 +129,6 @@ fun OpenNavigationWrapper(
     )
 }
 
-fun Destination?.toQueryType(): SelectedQueryType? {
-    return when (this) {
-        is Destination.Home -> resolveQuery()
-        is Destination.AnimationDetails -> null
-        else -> null
-    }
-}
 
 @Composable
 fun AppNavigationRail(
@@ -168,7 +161,7 @@ fun AppNavigationRail(
     ) {
         RailDestination.entries.forEach { entry ->
             val uiData = entry.buttonUi
-            val isSelected = currentDestination.toQueryType() == entry
+            val isSelected = isNavigationItemSelected(currentDestination, entry)
             NavigationRailItem(
                 selected = isSelected,
                 label = {
@@ -209,7 +202,7 @@ fun ModalNavigationDrawerContent(
         Spacer(modifier = Modifier.height(8.dp))
         RailDestination.entries.forEach { entry ->
             val uiData = entry.buttonUi
-            val isSelected = currentDestination.toQueryType() == entry
+            val isSelected = isNavigationItemSelected(currentDestination, entry)
             NavigationDrawerItem(
                 selected = isSelected,
                 label = {
@@ -260,4 +253,14 @@ fun ModalNavigationDrawerContent(
             }
         )
     }
+}
+
+private fun isNavigationItemSelected(
+    currentDestination: Destination?,
+    entry: RailDestination
+): Boolean = when (currentDestination) {
+    is Destination.Home -> currentDestination.resolveQuery() == entry
+    is Destination.AnimationDetails -> false
+    is Dashboard -> entry == Dashboard
+    null -> false
 }

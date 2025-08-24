@@ -2,13 +2,13 @@ package com.osg.openanimation.core.ui.home.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
-import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.di.UserRepository
-import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.di.data.GuestQueryType
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType.Tag
+import com.osg.openanimation.core.ui.graph.GuestQueryType
+import com.osg.openanimation.core.ui.graph.SelectedQueryType
+import com.osg.openanimation.core.ui.graph.SelectedQueryType.Tag
+import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
+import com.osg.openanimation.core.ui.di.domain.UserRepository
+import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates.Success
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +20,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AnimationViewModel(
-
     initialQueryType: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore
 ) : ViewModel(), KoinComponent {
     private val animationMetaRepo: AnimationMetadataRepository by inject()

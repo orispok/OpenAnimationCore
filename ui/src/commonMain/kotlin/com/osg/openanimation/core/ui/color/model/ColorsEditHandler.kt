@@ -3,7 +3,7 @@ package com.osg.openanimation.core.ui.color.model
 import androidx.compose.ui.graphics.Color
 import com.osg.openanimation.core.ui.color.util.getKMostDifferentColors
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -11,10 +11,10 @@ import com.osg.openanimation.core.ui.details.model.ds.ButtonTransitionState
 import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
 import com.osg.openanimation.core.ui.details.model.ds.DetailsUiPane
 import com.osg.openanimation.core.ui.details.model.ds.LikeStatsData
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
-import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.di.UserRepository
-import com.osg.openanimation.core.ui.di.UserSessionState
+import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
+import com.osg.openanimation.core.ui.di.domain.UserRepository
+import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.ColorPaletteWithMetadata
 import com.osg.openanimation.core.ui.home.model.toUiDataList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,15 +31,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class AnimationDetailsViewModel(
     private val animationHash: String,
-) : ViewModel(), KoinComponent {
-    private val dataFetcher: AnimationContentLoader by inject()
-    private val metaFetcher: AnimationMetadataRepository by inject()
-    private val userRepository: UserRepository by inject()
+    private val dataFetcher: AnimationContentLoader,
+    private val metaFetcher: AnimationMetadataRepository,
+    private val userRepository: UserRepository,
+) : ViewModel() {
+
     private val userActionRequestState = MutableStateFlow<DialogType?>(null)
     private val buttonTransitionState = MutableStateFlow(ButtonTransitionState())
 
@@ -52,23 +51,25 @@ class AnimationDetailsViewModel(
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val animationColorsEditHandlerFlow: SharedFlow<ColorsEditHandler> = animationMetadataFlow.map {
-        val animationJson = dataFetcher.fetchAnimationByPath(it.localFileName)
-        ColorsEditHandler(
-            animationContentLoader = { animationJson },
+    private val animationColorsEditHandlerFlow: SharedFlow<ColorsEditHandler> =
+        animationMetadataFlow.map {
+            val animationJson = dataFetcher.fetchAnimationByPath(it.localFileName)
+            ColorsEditHandler(
+                animationContentLoader = { animationJson },
+                scope = viewModelScope,
+                path = it.hash,
+            )
+        }.shareIn(
             scope = viewModelScope,
-            path = it.hash,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            replay = 1
         )
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000L),
-        replay = 1
-    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val animationColorsEditPaletteFlow: Flow<ColorsEditPalette> = animationColorsEditHandlerFlow.flatMapConcat { handler ->
-        handler.uiState
-    }
+    private val animationColorsEditPaletteFlow: Flow<ColorsEditPalette> =
+        animationColorsEditHandlerFlow.flatMapConcat { handler ->
+            handler.uiState
+        }
     private val animationWithColorPaletteFlow = combine(
         animationMetadataFlow,
         animationColorsEditPaletteFlow

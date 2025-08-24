@@ -21,7 +21,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.data.animation.AnimationMetadata
-import com.osg.openanimation.core.ui.di.LocalLinkProvider
+import com.osg.openanimation.core.ui.di.domain.LocalLinkProvider
 import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.util.icons.Download
 import com.osg.openanimation.core.ui.util.icons.Link

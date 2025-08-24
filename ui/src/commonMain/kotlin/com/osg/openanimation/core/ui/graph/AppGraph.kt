@@ -29,16 +29,16 @@ import com.osg.openanimation.core.ui.dashboard.model.DashboardViewModel
 import com.osg.openanimation.core.ui.details.AnimationDetailsPanes
 import com.osg.openanimation.core.ui.details.model.AnimationDetailsViewModel
 import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
-import com.osg.openanimation.core.ui.di.AnimationMetadataRepository
-import com.osg.openanimation.core.ui.di.UserRepository
-import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.di.data.Dashboard
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
+import com.osg.openanimation.core.ui.di.domain.UserRepository
+import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.model.AnimationViewModel
 import com.osg.openanimation.core.ui.home.ui.AnimationGrid
 import kotlinx.coroutines.flow.asFlow
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,18 +53,17 @@ fun AppGraph(
     OpenNavigationWrapper(
         isDarkMode = isDarkTheme,
         onSwitchMode = onSwitchMode,
-        currentDestination = currentDestination ,
+        currentDestination = currentDestination,
         onRailDst = {
-            navController.navigate(
-                when(it){
-                    Dashboard -> {
-                        Dashboard
-                    }
-                    is SelectedQueryType -> {
-                        Destination.Home(it)
-                    }
+            when (it) {
+                Dashboard -> {
+                    navController.navigate(Dashboard)
                 }
-            )
+                is SelectedQueryType -> {
+                    navController.navigate(Destination.Home(it))
+                }
+            }
+
         },
     ) {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -74,7 +73,9 @@ fun AppGraph(
             topBar = {
                 val userRepository = koinInject<UserRepository>()
                 val animationRepo = koinInject<AnimationMetadataRepository>()
-                val animationCatalogState by (animationRepo::fetchTags.asFlow()).collectAsState(emptySet())
+                val animationCatalogState by (animationRepo::fetchTags.asFlow()).collectAsState(
+                    emptySet()
+                )
                 val userSessionState by userRepository.profileFlow.collectAsState(UserSessionState.SignedOut)
                 SearchAnimationBar(
                     onSearchItemSelected = {
@@ -96,7 +97,6 @@ fun AppGraph(
                 startDestination = Destination.Home(),
             ) {
                 composable<Destination.Home> { backStackEntry ->
-                    backStackEntry
                     val queryType = backStackEntry.toRoute<Destination.Home>().resolveQuery()
                     val mainViewModel = viewModel {
                         AnimationViewModel(
@@ -104,7 +104,7 @@ fun AppGraph(
                         )
                     }
                     val uiState by mainViewModel.uiState.collectAsState()
-                    when(val uiData = uiState){
+                    when (val uiData = uiState) {
                         is ExploreScreenStates.Success -> {
                             AnimationGrid(
                                 modifier = Modifier,
@@ -116,10 +116,11 @@ fun AppGraph(
                                 }
                             )
                         }
+
                         ExploreScreenStates.RequiredLogin -> {
                             Box(
                                 modifier = Modifier.fillMaxSize()
-                            ){
+                            ) {
                                 SignInReasoningDialogView(
                                     modifier = Modifier.align(Alignment.TopCenter),
                                 )
@@ -136,14 +137,17 @@ fun AppGraph(
 
                 composable<Destination.AnimationDetails> { backStackEntry ->
                     val animationHash = backStackEntry.toRoute<Destination.AnimationDetails>().hash
-                    val detailsViewModel = viewModel { AnimationDetailsViewModel(animationHash) }
+                    val detailsViewModel = koinViewModel<AnimationDetailsViewModel> {
+                        parametersOf(animationHash)
+                    }
                     val uiState by detailsViewModel.uiState.collectAsState()
-                    when(val detailsUiState = uiState){
+                    when (val detailsUiState = uiState) {
                         DetailsScreenStates.Loading -> {
                             LoadingAnimation(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+
                         is DetailsScreenStates.Success -> {
                             AnimationDetailsPanes(
                                 detailsUiState = detailsUiState,
@@ -169,16 +173,23 @@ fun AppGraph(
                 }
 
                 composable<Dashboard> { backStackEntry ->
-                    val dashboardViewModel = viewModel { DashboardViewModel() }
+                    val dashboardViewModel = koinViewModel<DashboardViewModel>()
                     val uiState by dashboardViewModel.uiState.collectAsState()
                     DashboardView(
+                        modifier = Modifier.padding(innerPadding),
                         dashboardUiState = uiState,
-                        onFileDropped = dashboardViewModel::onFileDropped,
-                        onAnimationClick = dashboardViewModel::onAnimationClick,
-
-
+                        onAnimationEdit = { animationId ->
+                            navController.navigate(
+                                EditAnimation(animationId)
+                            )
+                        }
                     )
                 }
+
+                composable<EditAnimation> { backStackEntry ->
+
+                }
+
             }
 
             LaunchedEffect(navController) {

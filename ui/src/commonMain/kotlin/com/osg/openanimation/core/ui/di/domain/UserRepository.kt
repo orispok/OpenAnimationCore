@@ -1,7 +1,8 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.osg.openanimation.core.ui.di
+package com.osg.openanimation.core.ui.di.domain
 
+import com.osg.openanimation.core.data.upload.UploadedAnimationMeta
 import com.osg.openanimation.core.data.user.UserProfile
 import com.osg.openanimation.core.ui.components.signin.SignInResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,13 +23,7 @@ interface UserRepository{
     suspend fun onUserDownload(hash: String)
     suspend fun likeAnimation(hash: String)
     suspend fun dislikeAnimation(hash: String)
-
-    suspend fun uploadAnimation(
-        title: String,
-        description: String,
-        tags: List<String>,
-        animationData: ByteArray,
-    )
+    fun userAnimationsFlow(): Flow<List<UploadedAnimationMeta>>
 
     fun onUserSignOut()
     fun onRegistered(signInResultState: Result<SignInResult>)

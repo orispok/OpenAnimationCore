@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,17 +25,47 @@ import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.dashboard.dragAndDrop.resolveDroppedText
+import com.osg.openanimation.core.ui.dashboard.dragAndDrop.resolveDroppedContent
+import com.osg.openanimation.core.ui.di.domain.AnimationInitialUpload
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 
+@Composable
+fun DragAndDropLottieJsonViewManger(
+    modifier: Modifier = Modifier,
+    animationInitialUpload: AnimationInitialUpload = koinInject(),
+    onNavigateToDetails: (String) -> Unit,
+) {
+    var state by remember { mutableStateOf<DragAndDropState>(DragAndDropState.Initial) }
+    val scope = rememberCoroutineScope()
+    DragAndDropLottieJsonView(
+        modifier = modifier,
+        state = state,
+        onProcessing = {
+            state = DragAndDropState.Processing
+        },
+        onFileDropped = { content ->
+            scope.launch {
+                if (content == null) {
+                    state = DragAndDropState.Initial
+                }else{
+                    val result = animationInitialUpload.processUploadAnimation(content)
+                    onNavigateToDetails(result)
+                }
+            }
+        }
+    )
+}
 @Composable
 fun DragAndDropLottieJsonView(
     modifier: Modifier = Modifier,
     state: DragAndDropState,
-    onFileDropped: (String) -> Unit,
+    onProcessing: () -> Unit,
+    onFileDropped: (String?) -> Unit,
 ) {
     var isHovered by remember { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
     val dragAndDropTarget = remember {
         object : DragAndDropTarget {
             override fun onEntered(event: DragAndDropEvent) {
@@ -48,11 +79,12 @@ fun DragAndDropLottieJsonView(
             }
 
             override fun onDrop(event: DragAndDropEvent): Boolean {
-                val resolved = resolveDroppedText(event)
-                return resolved?.let {
-                    onFileDropped(it)
-                    true
-                } ?: false
+                onProcessing()
+                scope.launch {
+                    val resolved = resolveDroppedContent(event)
+                    onFileDropped(resolved)
+                }
+                return true
             }
         }
     }
@@ -99,14 +131,6 @@ fun DragAndDropLottieJsonView(
                     )
                 }
 
-                is DragAndDropState.FileDropped -> {
-                    Text(
-                        text = "File Dropped: ${state.content}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
-                    )
-                }
 
                 is DragAndDropState.Processing -> {
                     Column(

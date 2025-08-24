@@ -11,13 +11,10 @@ data class UploadedAnimationUiData(
 )
 
 sealed interface DashboardUiState {
+    data object  Loading : DashboardUiState
     data object SignedOut : DashboardUiState
     data object Empty: DashboardUiState
     data class UploadedCollection(
         val animations: List<UploadedAnimationUiData>,
-    ) : DashboardUiState
-
-    data class UploadedAnimationDetail(
-        val animation: UploadedAnimationUiData,
     ) : DashboardUiState
 }

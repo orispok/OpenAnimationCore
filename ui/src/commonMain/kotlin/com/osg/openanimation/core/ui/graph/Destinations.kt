@@ -3,7 +3,6 @@ package com.osg.openanimation.core.ui.graph
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.toRoute
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
 import com.osg.openanimation.core.ui.util.serialilze.decodeFromHexString
 import com.osg.openanimation.core.ui.util.serialilze.toHexString
 import kotlinx.serialization.SerialName
@@ -39,6 +38,8 @@ val NavBackStackEntry?.currentGraph : Destination?
              toRoute(Destination.Home::class)
         }else if (destination.hasRoute(Destination.AnimationDetails::class)) {
             toRoute(Destination.AnimationDetails::class)
+        } else if(destination.hasRoute(Dashboard::class)){
+            toRoute(Dashboard::class)
         }
         else null
     }

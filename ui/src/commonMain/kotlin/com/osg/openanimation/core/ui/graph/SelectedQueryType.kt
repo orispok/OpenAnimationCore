@@ -1,8 +1,8 @@
-package com.osg.openanimation.core.ui.di.data
+package com.osg.openanimation.core.ui.graph
 
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType.ExploreCategory.Explore
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType.ExploreCategory.Liked
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType.ExploreCategory.Trending
+import com.osg.openanimation.core.ui.graph.SelectedQueryType.ExploreCategory.Explore
+import com.osg.openanimation.core.ui.graph.SelectedQueryType.ExploreCategory.Liked
+import com.osg.openanimation.core.ui.graph.SelectedQueryType.ExploreCategory.Trending
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -55,4 +55,9 @@ sealed interface FilterQueryType: GuestQueryType
 
 
 @Serializable @SerialName("Dashboard")
-data object Dashboard: RailDestination
+data object Dashboard: RailDestination, Destination
+
+@Serializable @SerialName("EditAnimation")
+data class EditAnimation(
+    private val animationId: String,
+) : Destination

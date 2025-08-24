@@ -3,9 +3,9 @@ package com.osg.openanimation.core.ui.components.button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import com.osg.openanimation.core.ui.di.data.Dashboard
-import com.osg.openanimation.core.ui.di.data.RailDestination
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.graph.Dashboard
+import com.osg.openanimation.core.ui.graph.RailDestination
+import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.generated.resources.Res
 import com.osg.openanimation.core.ui.generated.resources.explore
 import com.osg.openanimation.core.ui.generated.resources.liked
