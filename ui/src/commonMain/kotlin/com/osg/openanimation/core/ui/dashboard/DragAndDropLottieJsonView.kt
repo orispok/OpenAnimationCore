@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.dashboard.dragAndDrop.resolveDroppedContent
+import com.osg.openanimation.core.ui.dashboard.filepicker.FilePicker
 import com.osg.openanimation.core.ui.di.domain.AnimationInitialUpload
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -49,7 +51,7 @@ fun DragAndDropLottieJsonViewManger(
             scope.launch {
                 if (content == null) {
                     state = DragAndDropState.Initial
-                }else{
+                } else {
                     val result = animationInitialUpload.processUploadAnimation(content)
                     onNavigateToDetails(result)
                 }
@@ -57,6 +59,7 @@ fun DragAndDropLottieJsonViewManger(
         }
     )
 }
+
 @Composable
 fun DragAndDropLottieJsonView(
     modifier: Modifier = Modifier,
@@ -66,6 +69,8 @@ fun DragAndDropLottieJsonView(
 ) {
     var isHovered by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var showFilePicker by remember { mutableStateOf(false) }
+
     val dragAndDropTarget = remember {
         object : DragAndDropTarget {
             override fun onEntered(event: DragAndDropEvent) {
@@ -80,14 +85,23 @@ fun DragAndDropLottieJsonView(
 
             override fun onDrop(event: DragAndDropEvent): Boolean {
                 onProcessing()
-                scope.launch {
-                    val resolved = resolveDroppedContent(event)
-                    onFileDropped(resolved)
-                }
+                resolveDroppedContent(event, onFileDropped)
                 return true
             }
         }
     }
+
+    FilePicker(
+        show = showFilePicker,
+        fileExtensions = listOf("json"),
+        onFileSelected = { content ->
+            onProcessing()
+            scope.launch {
+                onFileDropped(content)
+            }
+            showFilePicker = false
+        }
+    )
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -123,12 +137,23 @@ fun DragAndDropLottieJsonView(
         ) {
             when (state) {
                 is DragAndDropState.Initial -> {
-                    Text(
-                        text = "Drop your Lottie JSON file here",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Drop your Lottie JSON file here",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                        Button(
+                            onClick = { showFilePicker = true },
+                            modifier = Modifier.padding(top = 16.dp)
+                        ) {
+                            Text("Or select a file")
+                        }
+                    }
                 }
 
 

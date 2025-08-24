@@ -1,0 +1,65 @@
+package com.osg.openanimation.core.ui.dashboard
+
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun TagsEditView(
+    modifier: Modifier = Modifier,
+    tags: Set<String>,
+    onTagsChange: (Set<String>) -> Unit
+) {
+    var newTag by remember { mutableStateOf("") }
+
+    FlowRow(modifier = modifier) {
+        tags.forEach { tag ->
+            InputChip(
+                modifier = Modifier.padding(2.dp),
+                selected = false,
+                onClick = { onTagsChange(tags - tag) },
+                label = { Text(tag) },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Remove tag",
+                        modifier = Modifier.padding(2.dp)
+                    )
+                }
+            )
+        }
+        TextField(
+            value = newTag,
+            onValueChange = { newTag = it },
+            label = { Text("Add a tag") },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (newTag.isNotBlank()) {
+                        onTagsChange(tags + newTag)
+                        newTag = ""
+                    }
+                }
+            ),
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}

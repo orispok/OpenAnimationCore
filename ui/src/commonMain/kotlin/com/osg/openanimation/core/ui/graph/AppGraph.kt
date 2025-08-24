@@ -24,7 +24,9 @@ import com.osg.openanimation.core.ui.components.bar.OpenNavigationWrapper
 import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialogView
+import com.osg.openanimation.core.ui.dashboard.AnimationUploadScreen
 import com.osg.openanimation.core.ui.dashboard.DashboardView
+import com.osg.openanimation.core.ui.dashboard.model.AnimationUploadScreenViewModel
 import com.osg.openanimation.core.ui.dashboard.model.DashboardViewModel
 import com.osg.openanimation.core.ui.details.AnimationDetailsPanes
 import com.osg.openanimation.core.ui.details.model.AnimationDetailsViewModel
@@ -187,7 +189,18 @@ fun AppGraph(
                 }
 
                 composable<EditAnimation> { backStackEntry ->
-
+                    val viewModel = koinViewModel<AnimationUploadScreenViewModel>{
+                        parametersOf(backStackEntry.toRoute<EditAnimation>())
+                    }
+                    val uiState by viewModel.uiState.collectAsState()
+                    AnimationUploadScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        uiState = uiState,
+                        onPaletteSelected = viewModel::onPaletteSelected,
+                        onUploadClick = viewModel::onUploadClick,
+                        onTitleChanged = viewModel::onTitleChanged,
+                        onTagsChanged = viewModel::onTagsChanged
+                    )
                 }
 
             }

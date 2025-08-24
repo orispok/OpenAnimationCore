@@ -59,5 +59,5 @@ data object Dashboard: RailDestination, Destination
 
 @Serializable @SerialName("EditAnimation")
 data class EditAnimation(
-    private val animationId: String,
+    val animationId: String,
 ) : Destination

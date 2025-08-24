@@ -262,5 +262,5 @@ private fun isNavigationItemSelected(
     is Destination.Home -> currentDestination.resolveQuery() == entry
     is Destination.AnimationDetails -> false
     is Dashboard -> entry == Dashboard
-    null -> false
+    else -> false
 }

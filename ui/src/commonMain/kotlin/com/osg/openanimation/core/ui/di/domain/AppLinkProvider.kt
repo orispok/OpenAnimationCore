@@ -3,6 +3,7 @@ package com.osg.openanimation.core.ui.di.domain
 import androidx.compose.runtime.compositionLocalOf
 import com.osg.openanimation.core.ui.graph.Dashboard
 import com.osg.openanimation.core.ui.graph.Destination
+import com.osg.openanimation.core.ui.graph.EditAnimation
 
 data class AppLinkProvider(
     private val hostUrl: String = "http://localhost:8080"
@@ -22,6 +23,10 @@ data class AppLinkProvider(
             }
 
             Dashboard -> Dashboard.serializer().descriptor.serialName
+            is EditAnimation -> {
+                val serialName = EditAnimation.serializer().descriptor.serialName
+                "$serialName/${destination.animationId}"
+            }
         }
         return "$hostUrl/#$destinationPath"
     }

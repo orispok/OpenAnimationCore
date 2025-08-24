@@ -1,11 +1,9 @@
 package com.osg.openanimation.core.ui.dashboard.dragAndDrop
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.draganddrop.DragAndDropEvent
-import androidx.compose.ui.draganddrop.DragAndDropTarget
+import kotlinx.cinterop.ExperimentalForeignApi
 
-
-
-actual suspend fun resolveDroppedContent(event: DragAndDropEvent): String? {
-    TODO("Not yet implemented")
+@OptIn(ExperimentalForeignApi::class)
+actual fun resolveDroppedContent(event: DragAndDropEvent, onReadText: (String?) -> Unit) {
+    TODO()
 }
