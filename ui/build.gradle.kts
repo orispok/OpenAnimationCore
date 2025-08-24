@@ -31,7 +31,7 @@ kotlin {
         commonMain{
             dependencies {
                 implementation(projects.core.data)
-                implementation(projects.compottie.compottie)
+                implementation(projects.compottie.compottieLite)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
