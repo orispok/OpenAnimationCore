@@ -176,6 +176,7 @@ fun AppGraph(
                         onFileDropped = dashboardViewModel::onFileDropped,
                         onAnimationClick = dashboardViewModel::onAnimationClick,
 
+
                     )
                 }
             }
