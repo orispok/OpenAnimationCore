@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.osg.openanimation.core.ui.di.domain.AppLinkProvider
-import com.osg.openanimation.core.ui.graph.AppGraph
+import com.osg.openanimation.core.ui.graph.AppNavigation
 import com.osg.openanimation.core.ui.theme.TrueTheme
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
@@ -38,7 +38,7 @@ class BaseApp(
             linkProvider = koinInject(),
             isDarkTheme = isDarkTheme,
         ) {
-            AppGraph(
+            AppNavigation(
                 isDarkTheme = isDarkTheme,
                 onSwitchMode = {
                     isDarkTheme = it

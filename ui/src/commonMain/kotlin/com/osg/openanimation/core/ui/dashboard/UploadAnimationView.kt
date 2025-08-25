@@ -47,6 +47,7 @@ fun AnimationUploadScreen(
     uiState: AnimationUploadUiState,
     onPaletteSelected: (Int) -> Unit,
     onUploadClick: () -> Unit,
+    onRemovalClick: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onTagsChanged: (Set<String>) -> Unit,
 ) {
@@ -68,6 +69,7 @@ fun AnimationUploadScreen(
                 onTagsChanged = onTagsChanged,
                 editableAnimation = uiState.editableAnimation,
                 allTags = uiState.allTags,
+                onRemovalClick = onRemovalClick
             )
         }
     }
@@ -82,6 +84,7 @@ fun AnimationUploadForm(
     allTags: Set<String>,
     onPaletteSelected: (Int) -> Unit,
     onUploadClick: () -> Unit,
+    onRemovalClick: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onTagsChanged: (Set<String>) -> Unit,
 ) {

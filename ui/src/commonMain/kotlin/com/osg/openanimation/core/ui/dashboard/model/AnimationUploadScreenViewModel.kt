@@ -156,4 +156,14 @@ class AnimationUploadScreenViewModel(
         tagsStateFlow.value = tags
     }
 
+    fun onRemovalClick(
+        onRemoved: () -> Unit
+    ) {
+        viewModelScope.launch {
+            val currentMeta = animationMetadataFlow.first()
+            metaFetcher.onRemoveAnimation(currentMeta.hash)
+            onRemoved()
+        }
+    }
+
 }
