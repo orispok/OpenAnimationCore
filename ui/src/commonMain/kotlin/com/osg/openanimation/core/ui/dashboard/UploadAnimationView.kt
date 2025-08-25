@@ -6,15 +6,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -33,7 +37,9 @@ import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
+import com.osg.openanimation.core.ui.util.adaptive.isCompactWidth
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
+import com.osg.openanimation.core.ui.util.icons.Save
 import kotlin.math.roundToInt
 
 
@@ -84,78 +90,161 @@ fun AnimationUploadForm(
     onTitleChanged: (String) -> Unit,
     onTagsChanged: (Set<String>) -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
     ) {
-        val containerSize = LocalWindowInfo.current.containerSize
-        val animationHeight = (containerSize.height * 0.6).roundToInt()
-        AnimationCard(
-            modifier = Modifier.height(animationHeight.pxToDp()),
-            animationState = editableAnimation.processedJsonState,
-        )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            OutlinedTextField(
-                modifier = Modifier,
-                value = uploadedAnimationMeta.name,
-                onValueChange = onTitleChanged,
-                label = { Text("Title") },
-                maxLines = 1,
-                singleLine = true,
-            )
             ColorPaletteOptionsView(
                 modifier = Modifier.width(120.dp),
                 transformOptions = editableAnimation.options,
                 selectedIndex = editableAnimation.selectedOptionIndex,
                 onPalletSelect = onPaletteSelected,
             )
+            UploadController(
+                moderationStatus = moderationStatus,
+                onUploadClick = onUploadClick,
+                onRemovalClick = onRemovalClick
+            )
         }
+        if (isCompactWidth) {
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                val containerSize = LocalWindowInfo.current.containerSize
+                val animationHeight = (containerSize.height * 0.6).roundToInt()
+                AnimationCard(
+                    modifier = Modifier.height(animationHeight.pxToDp()),
+                    animationState = editableAnimation.processedJsonState,
+                )
+                EditableFieldsView(
+                    modifier = Modifier,
+                    uploadedAnimationMeta = uploadedAnimationMeta,
+                    onTitleChanged = onTitleChanged,
+                    onTagsChanged = onTagsChanged,
+                    allTags = allTags,
+                    moderationStatus = moderationStatus
+                )
+            }
+        } else {
+            Row(
+                modifier = modifier,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                AnimationCard(
+                    modifier = Modifier.weight(1f),
+                    animationState = editableAnimation.processedJsonState,
+                )
+
+                EditableFieldsView(
+                    modifier = Modifier,
+                    uploadedAnimationMeta = uploadedAnimationMeta,
+                    onTitleChanged = onTitleChanged,
+                    onTagsChanged = onTagsChanged,
+                    allTags = allTags,
+                    moderationStatus = moderationStatus
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditableFieldsView(
+    modifier: Modifier = Modifier,
+    moderationStatus: ModerationStatus,
+    uploadedAnimationMeta: UploadedAnimationMeta,
+    onTitleChanged: (String) -> Unit,
+    onTagsChanged: (Set<String>) -> Unit,
+    allTags: Set<String>
+) {
+    Column(
+        modifier = modifier.padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ElevatedCard {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = moderationStatus.name
+            )
+        }
+        OutlinedTextField(
+            modifier = Modifier,
+            value = uploadedAnimationMeta.name,
+            onValueChange = onTitleChanged,
+            label = { Text("Title") },
+            maxLines = 1,
+            singleLine = true,
+        )
         TagsEditView(
             tags = uploadedAnimationMeta.tags.toSet(),
             onTagsChange = onTagsChanged,
             allTags = allTags,
         )
-        UploadController(moderationStatus, onUploadClick, onRemovalClick)
     }
+
 }
 
 @Composable
 private fun UploadController(
     moderationStatus: ModerationStatus,
     onUploadClick: () -> Unit,
-    onRemovalClick: () -> Unit
+    onRemovalClick: () -> Unit,
+    onSaveClick: () -> Unit = { }
 ) {
     var isEnabled by remember(moderationStatus) { mutableStateOf(true) }
-    if (moderationStatus == ModerationStatus.DRAFT) {
-        Button(
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+
+        IconButton(
             onClick = {
                 isEnabled = false
-                onUploadClick()
+                onRemovalClick()
             },
             modifier = Modifier,
             enabled = isEnabled
         ) {
-            Text("Upload Animation")
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Remove Animation",
+            )
         }
-    } else {
-        ModerationStatusView(moderationStatus)
-    }
-    Button(
-        onClick = {
-            isEnabled = false
-            onRemovalClick()
-        },
-        modifier = Modifier,
-        enabled = isEnabled
-    ) {
-        Text("Remove Animation")
+
+        IconButton(
+            onClick = {
+                isEnabled = false
+                onSaveClick()
+            },
+            modifier = Modifier,
+            enabled = isEnabled
+        ) {
+            Icon(
+                imageVector = Icons.Default.Save,
+                contentDescription = "Remove Animation",
+            )
+        }
+
+        if (moderationStatus == ModerationStatus.DRAFT) {
+            ElevatedButton(
+                onClick = {
+                    isEnabled = false
+                    onUploadClick()
+                },
+                modifier = Modifier,
+                enabled = isEnabled
+            ) {
+                Text("Publish")
+            }
+        }
     }
 }
 
