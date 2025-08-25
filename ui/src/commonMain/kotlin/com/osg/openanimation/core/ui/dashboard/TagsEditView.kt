@@ -1,14 +1,16 @@
 package com.osg.openanimation.core.ui.dashboard
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
@@ -35,10 +39,17 @@ fun TagsEditView(
 ) {
     var newTag by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+
     Column(
-        modifier = modifier
+        modifier = modifier.animateContentSize()
     ) {
+        var textFieldSize by remember {
+            mutableStateOf(0)
+        }
         OutlinedTextField(
+            modifier = Modifier.onGloballyPositioned { coordinates ->
+                textFieldSize = coordinates.size.width
+            },
             value = newTag,
             onValueChange = {
                 newTag = it
@@ -46,9 +57,6 @@ fun TagsEditView(
             },
             label = {
                 Text("Add Tags")
-            },
-            trailingIcon = {
-
             },
 
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -61,13 +69,14 @@ fun TagsEditView(
                     }
                 }
             ),
-            modifier = Modifier.padding(2.dp)
         )
+        val widthDp = with(LocalDensity.current) {
+            textFieldSize.toDp()
+        }
 
         if (expanded) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+            Card(
+                modifier = Modifier.width(widthDp)
             ) {
                 if (newTag.isNotBlank() && newTag !in tags) {
                     DropdownMenuItem(
@@ -79,15 +88,18 @@ fun TagsEditView(
                         }
                     )
                 }
+
                 val suggestions = allTags.filter {
-                    it.contains(
-                        newTag,
-                        ignoreCase = true
-                    ) && it !in tags && it != newTag
+                    it !in tags && it != newTag
+                }.sortedByDescending {
+                    it.contains(newTag, ignoreCase = true)
                 }
+
                 suggestions.take(5).forEach { suggestion ->
                     DropdownMenuItem(
-                        text = { Text(suggestion) },
+                        text = {
+                            Text(suggestion)
+                        },
                         onClick = {
                             onTagsChange(tags + suggestion)
                             newTag = ""

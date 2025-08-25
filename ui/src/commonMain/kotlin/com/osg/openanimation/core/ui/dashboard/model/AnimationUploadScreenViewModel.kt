@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -30,7 +29,7 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.Provided
 
-data class ModerationMeta(
+private data class ModerationMeta(
     val moderation: ModerationStatus,
     val uploadedAnimationMeta: UploadedAnimationMeta,
 )
@@ -41,31 +40,27 @@ class AnimationUploadScreenViewModel(
     @Provided private val dataFetcher: AnimationContentLoader,
     @Provided private val metaFetcher: UploadedMetadataRepository,
     @Provided private val animationUploader: AnimationUploader
-): ViewModel() {
+) : ViewModel() {
 
     private val animationNameStateFlow = MutableStateFlow<String?>(null)
 
     private val tagsStateFlow = MutableStateFlow<Set<String>?>(null)
 
-    private val animationMetadataFlow = flow {
-        emit(metaFetcher.fetchAnimationUploadedMeta(arg.animationId))
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000L),
-        replay = 1
-    )
+    private val animationMetadataFlow = metaFetcher
+        .uploadedMetaFlow(arg.animationId)
+        .shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            replay = 1
+        )
+
 
     private val moderationDetailsFlow: Flow<ModerationMeta> = combine(
         animationMetadataFlow,
         animationNameStateFlow,
         tagsStateFlow,
-    )
-    { animationMeta, name, tags ->
-        val mod = if (animationMeta.isSubmitted) {
-            metaFetcher.fetchAnimationModerationStatus(animationMeta.hash)
-        } else {
-            ModerationStatus.DRAFT
-        }
+        metaFetcher.moderationStatusFlow(arg.animationId),
+    ) { animationMeta, name, tags, mod ->
         val updatedMeta = animationMeta.copy(
             name = name ?: animationMeta.name,
             tags = tags?.toList() ?: animationMeta.tags,
@@ -104,8 +99,6 @@ class AnimationUploadScreenViewModel(
         )
 
 
-
-
     val uiState: StateFlow<AnimationUploadUiState> = combine(
         moderationDetailsFlow,
         animationColorsEditPaletteFlow,
@@ -132,7 +125,7 @@ class AnimationUploadScreenViewModel(
     }
 
 
-    fun onUploadClick() {
+    fun onPublishClick() {
         viewModelScope.launch {
             val currentMeta = animationMetadataFlow.first()
             val currentName = animationNameStateFlow.value ?: currentMeta.name
@@ -152,7 +145,9 @@ class AnimationUploadScreenViewModel(
             )
 
             animationUploader.uploadAnimation(
-                uploadedAnimationMeta = updatedMeta,
+                uploadedAnimationMeta = updatedMeta.copy(
+                    isSubmitted = true
+                ),
                 animationContent = processedJson,
             )
         }

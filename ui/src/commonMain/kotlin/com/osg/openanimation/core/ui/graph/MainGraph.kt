@@ -24,7 +24,9 @@ import org.koin.core.parameter.parametersOf
 fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     composable<Destination.Home> { backStackEntry ->
         val queryType = backStackEntry.toRoute<Destination.Home>().resolveQuery()
-        val mainViewModel = koinViewModel<AnimationViewModel> {
+        val mainViewModel = koinViewModel<AnimationViewModel>(
+            key = queryType.keySearch
+        ) {
             parametersOf(queryType)
         }
         val uiState by mainViewModel.uiState.collectAsState()
@@ -96,7 +98,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             modifier = Modifier.Companion,
             uiState = uiState,
             onPaletteSelected = viewModel::onPaletteSelected,
-            onUploadClick = viewModel::onUploadClick,
+            onUploadClick = viewModel::onPublishClick,
             onTitleChanged = viewModel::onTitleChanged,
             onTagsChanged = viewModel::onTagsChanged,
             onRemovalClick = {

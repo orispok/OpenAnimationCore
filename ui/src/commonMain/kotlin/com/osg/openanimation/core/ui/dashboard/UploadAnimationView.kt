@@ -1,14 +1,11 @@
 package com.osg.openanimation.core.ui.dashboard
 
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,11 +19,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.data.upload.ModerationStatus
@@ -36,9 +34,7 @@ import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
-import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -126,71 +122,63 @@ fun AnimationUploadForm(
             onTagsChange = onTagsChanged,
             allTags = allTags,
         )
-        if (moderationStatus == ModerationStatus.DRAFT) {
-            Button(
-                onClick = onUploadClick,
-                modifier = Modifier
-            ) {
-                Text("Upload Animation")
-            }
-        } else {
-            ModerationStatusView(moderationStatus)
-        }
-        Button(
-            onClick = { /* TODO: */ },
-            modifier = Modifier
-        ) {
-            Text("Remove")
-        }
+        UploadController(moderationStatus, onUploadClick, onRemovalClick)
     }
 }
 
 @Composable
+private fun UploadController(
+    moderationStatus: ModerationStatus,
+    onUploadClick: () -> Unit,
+    onRemovalClick: () -> Unit
+) {
+    var isEnabled by remember(moderationStatus) { mutableStateOf(true) }
+    if (moderationStatus == ModerationStatus.DRAFT) {
+        Button(
+            onClick = {
+                isEnabled = false
+                onUploadClick()
+            },
+            modifier = Modifier,
+            enabled = isEnabled
+        ) {
+            Text("Upload Animation")
+        }
+    } else {
+        ModerationStatusView(moderationStatus)
+    }
+    Button(
+        onClick = {
+            isEnabled = false
+            onRemovalClick()
+        },
+        modifier = Modifier,
+        enabled = isEnabled
+    ) {
+        Text("Remove Animation")
+    }
+}
+
+
+@Composable
 fun ModerationStatusView(
     status: ModerationStatus,
-    startColor: Color = MaterialTheme.colorScheme.onSurface,
-    endColor: Color = MaterialTheme.colorScheme.primary,
     modifier: Modifier = Modifier,
 ) {
-    val statuses = ModerationStatus.entries
-    val currentStatusIndex = statuses.indexOf(status)
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        statuses.forEachIndexed { index, moderationStatus ->
-            val colorAnim = remember { Animatable(startColor) }
-            LaunchedEffect(currentStatusIndex) {
-                if (index <= currentStatusIndex) {
-                    delay(250.milliseconds * index)
-                    colorAnim.animateTo(
-                        targetValue = endColor,
-                        animationSpec = tween(250)
-                    )
-                }
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(4.dp)
-            ) {
-                Icon(
-                    imageVector = when (moderationStatus) {
-                        ModerationStatus.DRAFT -> Icons.Default.Info
-                        ModerationStatus.PENDING -> Icons.Default.Info
-                        ModerationStatus.APPROVED -> Icons.Default.CheckCircle
-                        ModerationStatus.REJECTED -> Icons.Default.ThumbUp
-                    },
-                    contentDescription = moderationStatus.name,
-                    tint = colorAnim.value
-                )
-                Text(
-                    text = moderationStatus.name.lowercase()
-                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                    color = colorAnim.value
-                )
-            }
-        }
-    }
+    Icon(
+        modifier = modifier,
+        imageVector = when (status) {
+            ModerationStatus.DRAFT -> Icons.Default.Info
+            ModerationStatus.PENDING -> Icons.Default.Info
+            ModerationStatus.APPROVED -> Icons.Default.CheckCircle
+            ModerationStatus.REJECTED -> Icons.Default.ThumbUp
+        },
+        contentDescription = status.name,
+        tint = when (status) {
+            ModerationStatus.DRAFT -> MaterialTheme.colorScheme.onSurface
+            ModerationStatus.PENDING -> MaterialTheme.colorScheme.onSurface
+            ModerationStatus.APPROVED -> MaterialTheme.colorScheme.primary
+            ModerationStatus.REJECTED -> MaterialTheme.colorScheme.error
+        },
+    )
 }

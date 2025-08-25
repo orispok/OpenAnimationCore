@@ -22,12 +22,15 @@ import org.koin.core.annotation.Provided
 
 @KoinViewModel
 class AnimationViewModel(
-    @InjectedParam initialQueryType: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore,
+    @InjectedParam initialQueryType: SelectedQueryType,
     @Provided private val animationMetaRepo: AnimationMetadataRepository,
     @Provided private val animationContentLoader: AnimationContentLoader,
     @Provided userRepository: UserRepository,
 ) : ViewModel(){
 
+    init {
+        println("initialQueryType = $initialQueryType")
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<ExploreScreenStates> = userRepository.profileFlow.mapLatest {
