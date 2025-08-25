@@ -21,7 +21,7 @@ import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieAnimatable
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
-
+import org.koin.core.annotation.ComponentScan
 
 @Composable
 fun LottieAnimationView(
