@@ -126,13 +126,13 @@ fun UploadedCollectionView(
         }
         items(
             items = uploadedAnimations,
-            key = { it.metadata.animationId },
+            key = { it.metadata.hash },
         ) { animationsData ->
             AnimationUploadedCard(
                 modifier = Modifier.padding(horizontal = 8.dp).width(300.dp).height(400.dp),
                 animationData = animationsData,
                 onClick = {
-                    onAnimationClick(animationsData.metadata.animationId)
+                    onAnimationClick(animationsData.metadata.hash)
                 }
             )
         }

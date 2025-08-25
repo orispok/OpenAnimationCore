@@ -2,13 +2,13 @@ package com.osg.openanimation.core.ui.home.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.osg.openanimation.core.ui.graph.GuestQueryType
-import com.osg.openanimation.core.ui.graph.SelectedQueryType
-import com.osg.openanimation.core.ui.graph.SelectedQueryType.Tag
 import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.domain.UserRepository
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
+import com.osg.openanimation.core.ui.graph.GuestQueryType
+import com.osg.openanimation.core.ui.graph.SelectedQueryType
+import com.osg.openanimation.core.ui.graph.SelectedQueryType.Tag
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates.Success
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,15 +16,18 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.Provided
 
+@KoinViewModel
 class AnimationViewModel(
-    initialQueryType: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore
-) : ViewModel(), KoinComponent {
-    private val animationMetaRepo: AnimationMetadataRepository by inject()
-    private val animationContentLoader: AnimationContentLoader by inject()
-    private val userRepository: UserRepository by inject()
+    @InjectedParam initialQueryType: SelectedQueryType = SelectedQueryType.ExploreCategory.Explore,
+    @Provided private val animationMetaRepo: AnimationMetadataRepository,
+    @Provided private val animationContentLoader: AnimationContentLoader,
+    @Provided userRepository: UserRepository,
+) : ViewModel(){
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<ExploreScreenStates> = userRepository.profileFlow.mapLatest {
@@ -39,14 +42,14 @@ class AnimationViewModel(
     )
 
 
-
     internal suspend fun resolveUiState(
         userSessionState: UserSessionState,
         queryType: SelectedQueryType,
     ): ExploreScreenStates {
         return when (queryType) {
             is GuestQueryType -> {
-                val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE).toUiDataList(animationContentLoader)
+                val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE)
+                    .toUiDataList(animationContentLoader)
                 return Success(
                     animations = animations,
                     selected = queryType,
@@ -55,6 +58,7 @@ class AnimationViewModel(
                     }
                 )
             }
+
             is SelectedQueryType.ExploreCategory.Liked -> {
                 if (userSessionState is UserSessionState.SignedIn) {
                     val animations = userSessionState.favorites

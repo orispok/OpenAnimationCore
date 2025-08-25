@@ -23,6 +23,7 @@ interface UserRepository{
     suspend fun onUserDownload(hash: String)
     suspend fun likeAnimation(hash: String)
     suspend fun dislikeAnimation(hash: String)
+
     fun userAnimationsFlow(): Flow<List<UploadedAnimationMeta>>
 
     fun onUserSignOut()

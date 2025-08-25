@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UploadedAnimationMeta(
-    val animationId: String,
+    val hash: String,
     val uploadTimestamp: Long,
-    val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
     val name: String,
     val description: String,
     val path: String,
+    val isSubmitted: Boolean,
     val tags: List<String> = emptyList(),
 )

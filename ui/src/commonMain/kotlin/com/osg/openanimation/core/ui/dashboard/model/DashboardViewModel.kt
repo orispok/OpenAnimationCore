@@ -17,11 +17,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Provided
 
 
+@KoinViewModel
 class DashboardViewModel(
-    private val dataFetcher: AnimationContentLoader,
-    private val userRepository: UserRepository,
+    @Provided private val dataFetcher: AnimationContentLoader,
+    @Provided private val userRepository: UserRepository,
 ): ViewModel() {
 
     private val signedInFlow: Flow<DashboardUiState> = userRepository.userAnimationsFlow().map {uploadedAnimations ->

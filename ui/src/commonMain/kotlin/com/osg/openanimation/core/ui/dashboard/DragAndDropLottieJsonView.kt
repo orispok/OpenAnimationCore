@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.dashboard.dragAndDrop.resolveDroppedContent
 import com.osg.openanimation.core.ui.dashboard.filepicker.FilePicker
-import com.osg.openanimation.core.ui.di.domain.AnimationInitialUpload
+import com.osg.openanimation.core.ui.di.domain.AnimationUploader
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -36,7 +36,7 @@ import org.koin.compose.koinInject
 @Composable
 fun DragAndDropLottieJsonViewManger(
     modifier: Modifier = Modifier,
-    animationInitialUpload: AnimationInitialUpload = koinInject(),
+    animationUploader: AnimationUploader = koinInject(),
     onNavigateToDetails: (String) -> Unit,
 ) {
     var state by remember { mutableStateOf<DragAndDropState>(DragAndDropState.Initial) }
@@ -52,7 +52,7 @@ fun DragAndDropLottieJsonViewManger(
                 if (content == null) {
                     state = DragAndDropState.Initial
                 } else {
-                    val result = animationInitialUpload.processUploadAnimation(content)
+                    val result = animationUploader.processUploadAnimation(content)
                     onNavigateToDetails(result)
                 }
             }

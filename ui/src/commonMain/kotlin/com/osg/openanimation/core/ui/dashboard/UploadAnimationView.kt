@@ -16,15 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.data.upload.ModerationStatus
+import com.osg.openanimation.core.data.upload.UploadedAnimationMeta
+import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
-import com.osg.openanimation.core.ui.home.domain.ColorPaletteWithMetadata
 
 
 sealed interface AnimationUploadUiState {
     data object Loading : AnimationUploadUiState
     data class Ready(
-        val animationUiData: ColorPaletteWithMetadata,
+        val editableAnimation: ColorsEditPalette,
+        val uploadedAnimationMeta: UploadedAnimationMeta,
         val moderationStatus: ModerationStatus,
     ) : AnimationUploadUiState
 }
@@ -52,12 +54,13 @@ fun AnimationUploadScreen(
         is AnimationUploadUiState.Ready -> {
             AnimationUploadForm(
                 modifier = modifier,
-                animationUiData = uiState.animationUiData,
+                uploadedAnimationMeta = uiState.uploadedAnimationMeta,
                 moderationStatus = uiState.moderationStatus,
                 onPaletteSelected = onPaletteSelected,
                 onUploadClick = onUploadClick,
                 onTitleChanged = onTitleChanged,
-                onTagsChanged = onTagsChanged
+                onTagsChanged = onTagsChanged,
+                editableAnimation = uiState.editableAnimation
             )
         }
     }
@@ -65,7 +68,8 @@ fun AnimationUploadScreen(
 @Composable
 fun AnimationUploadForm(
     modifier: Modifier = Modifier,
-    animationUiData: ColorPaletteWithMetadata,
+    editableAnimation : ColorsEditPalette,
+    uploadedAnimationMeta: UploadedAnimationMeta,
     moderationStatus: ModerationStatus,
     onPaletteSelected: (Int) -> Unit,
     onUploadClick: () -> Unit,
@@ -82,7 +86,7 @@ fun AnimationUploadForm(
     ) {
         AnimationCard(
             modifier = Modifier,
-            animationState = animationUiData.editableAnimation.processedJsonState,
+            animationState = editableAnimation.processedJsonState,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -90,7 +94,7 @@ fun AnimationUploadForm(
         ) {
             TextField(
                 modifier = Modifier,
-                value = animationUiData.metadata.name,
+                value = uploadedAnimationMeta.name,
                 onValueChange = onTitleChanged,
                 label = { Text("Title") },
                 maxLines = 1,
@@ -98,14 +102,14 @@ fun AnimationUploadForm(
             )
             ColorPaletteOptionsView(
                 modifier = Modifier.width(120.dp),
-                transformOptions = animationUiData.editableAnimation.options,
-                selectedIndex = animationUiData.editableAnimation.selectedOptionIndex,
-                onPaletteSelected = onPaletteSelected
+                transformOptions = editableAnimation.options,
+                selectedIndex = editableAnimation.selectedOptionIndex,
+                onPalletSelect = onPaletteSelected,
             )
         }
         TagsEditView(
-            tags = animationUiData.metadata.tags,
-            onTagsChanged = onTagsChanged
+            tags = uploadedAnimationMeta.tags.toSet(),
+            onTagsChange = onTagsChanged,
         )
         if(moderationStatus == ModerationStatus.DRAFT){
             Button(

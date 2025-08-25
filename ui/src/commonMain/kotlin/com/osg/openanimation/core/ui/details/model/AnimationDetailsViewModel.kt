@@ -31,12 +31,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.Provided
 
+@KoinViewModel
 class AnimationDetailsViewModel(
-    private val animationHash: String,
-    private val dataFetcher: AnimationContentLoader,
-    private val metaFetcher: AnimationMetadataRepository,
-    private val userRepository: UserRepository,
+    @InjectedParam private val animationHash: String,
+    @Provided private val dataFetcher: AnimationContentLoader,
+    @Provided private val metaFetcher: AnimationMetadataRepository,
+    @Provided private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val userActionRequestState = MutableStateFlow<DialogType?>(null)
