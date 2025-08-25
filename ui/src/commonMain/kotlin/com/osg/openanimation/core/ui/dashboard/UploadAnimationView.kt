@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -37,6 +36,7 @@ import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.color.ui.ColorPaletteOptionsView
 import com.osg.openanimation.core.ui.components.loading.LoadingAnimation
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
+import com.osg.openanimation.core.ui.details.IconLoadingButton
 import com.osg.openanimation.core.ui.util.adaptive.isCompactWidth
 import com.osg.openanimation.core.ui.util.adaptive.pxToDp
 import com.osg.openanimation.core.ui.util.icons.Save
@@ -66,14 +66,15 @@ fun AnimationUploadScreen(
                 modifier = modifier,
                 uploadedAnimationMeta = uiState.uploadedAnimationMeta,
                 moderationStatus = uiState.moderationStatus,
+                editableAnimation = uiState.editableAnimation,
+                allTags = uiState.allTags,
+                isUnsaved = uiState.isUnsaved,
                 onPaletteSelected = onPaletteSelected,
                 onUploadClick = onUploadClick,
                 onTitleChanged = onTitleChanged,
                 onTagsChanged = onTagsChanged,
-                editableAnimation = uiState.editableAnimation,
-                allTags = uiState.allTags,
                 onRemovalClick = onRemovalClick,
-                onSaveClick = onSaveClick
+                onSaveClick = onSaveClick,
             )
         }
     }
@@ -85,6 +86,7 @@ fun AnimationUploadForm(
     editableAnimation: ColorsEditPalette,
     uploadedAnimationMeta: UploadedAnimationMeta,
     moderationStatus: ModerationStatus,
+    isUnsaved: Boolean,
     allTags: Set<String>,
     onPaletteSelected: (Int) -> Unit,
     onUploadClick: () -> Unit,
@@ -111,7 +113,8 @@ fun AnimationUploadForm(
                 moderationStatus = moderationStatus,
                 onUploadClick = onUploadClick,
                 onRemovalClick = onRemovalClick,
-                onSaveClick = onSaveClick
+                onSaveClick = onSaveClick,
+                isUnsaved = isUnsaved
             )
         }
         if (isCompactWidth) {
@@ -199,52 +202,48 @@ private fun EditableFieldsView(
 
 @Composable
 private fun UploadController(
+    isUnsaved: Boolean,
     moderationStatus: ModerationStatus,
     onUploadClick: () -> Unit,
     onRemovalClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
-    var isEnabled by remember(moderationStatus) { mutableStateOf(true) }
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-
-        IconButton(
+        var isDeleteClicked by remember { mutableStateOf(false) }
+        IconLoadingButton(
+            modifier = Modifier,
+            primaryIcon = Icons.Default.Delete,
+            isDownloadedTransition = isDeleteClicked,
             onClick = {
-                isEnabled = false
+                isDeleteClicked = true
                 onRemovalClick()
             },
-            modifier = Modifier,
-            enabled = isEnabled
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Remove Animation",
-            )
-        }
+        )
 
-        IconButton(
+        var isSaveClicked by remember(isUnsaved) { mutableStateOf(false) }
+        IconLoadingButton(
+            modifier = Modifier,
+            isEnabled = isUnsaved,
+            primaryIcon = Icons.Default.Save,
+            isDownloadedTransition = isSaveClicked,
             onClick = {
-                isEnabled = false
+                isSaveClicked = true
                 onSaveClick()
             },
-            modifier = Modifier,
-            enabled = isEnabled
-        ) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Remove Animation",
-            )
-        }
+        )
+
 
         if (moderationStatus == ModerationStatus.DRAFT) {
+            var publishClicked by remember { mutableStateOf(false) }
             ElevatedButton(
                 onClick = {
-                    isEnabled = false
+                    publishClicked = false
                     onUploadClick()
                 },
                 modifier = Modifier,
-                enabled = isEnabled
+                enabled = publishClicked.not()
             ) {
                 Text("Publish")
             }

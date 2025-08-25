@@ -46,6 +46,8 @@ class AnimationUploadScreenViewModel(
 
     private val tagsStateFlow = MutableStateFlow<Set<String>?>(null)
 
+    private val lastSavedPaletteIdx = MutableStateFlow(0)
+
     private val animationMetadataFlow = metaFetcher
         .uploadedMetaFlow(arg.animationId)
         .shareIn(
@@ -109,6 +111,9 @@ class AnimationUploadScreenViewModel(
             editableAnimation = animationData,
             uploadedAnimationMeta = moderationMeta.uploadedAnimationMeta,
             moderationStatus = moderationMeta.moderation,
+            isUnsaved = (title != null && title != moderationMeta.uploadedAnimationMeta.name) ||
+                    (tags != null && tags.toList() != moderationMeta.uploadedAnimationMeta.tags) ||
+                    (animationData.selectedOptionIndex != lastSavedPaletteIdx.value)
         )
     }.stateIn(
         scope = viewModelScope,
@@ -163,6 +168,7 @@ class AnimationUploadScreenViewModel(
                 ) else updatedMeta,
                 animationContent = processedJson,
             )
+            lastSavedPaletteIdx.value = editPalette.selectedOptionIndex
         }
     }
     fun onPublishClick() {

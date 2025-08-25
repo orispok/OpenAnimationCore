@@ -10,6 +10,7 @@ sealed interface AnimationUploadUiState {
         val editableAnimation: ColorsEditPalette,
         val uploadedAnimationMeta: UploadedAnimationMeta,
         val moderationStatus: ModerationStatus,
+        val isUnsaved: Boolean,
         val allTags: Set<String> = emptySet(),
     ) : AnimationUploadUiState
 }

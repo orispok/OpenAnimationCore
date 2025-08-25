@@ -15,9 +15,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.data.animation.AnimationMetadata
@@ -66,9 +73,10 @@ fun AnimationDetailsActions(
                 modifier = Modifier.scale(scale)
             )
         }
-        DownloadButton(
+        IconLoadingButton(
             modifier = Modifier.size(48.dp),
             isDownloadedTransition = isDownloadedTransition,
+            primaryIcon = Icons.Default.Download,
             onClick = {
                 onDownloadClick(animationMetadata)
             }
@@ -91,9 +99,11 @@ fun AnimationDetailsActions(
 }
 
 @Composable
-fun DownloadButton(
+fun IconLoadingButton(
     modifier: Modifier = Modifier,
     isDownloadedTransition: Boolean,
+    primaryIcon: ImageVector,
+    isEnabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     var iconAnimationState by remember { mutableStateOf(IconAnimationState.IDLE) }
@@ -106,7 +116,7 @@ fun DownloadButton(
     }
     IconButtonInstantTask(
         modifier = modifier,
-        primaryIcon = Icons.Default.Download,
+        primaryIcon = primaryIcon,
         secondaryIcon = Icons.Default.Check,
         iconAnimationState = iconAnimationState,
         onReturnToIdle = {
