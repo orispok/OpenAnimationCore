@@ -105,7 +105,8 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 viewModel.onRemovalClick {
                     navController.popBackStack()
                 }
-            }
+            },
+            onSaveClick = viewModel::onSaveClick
         )
     }
 }

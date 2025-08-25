@@ -52,6 +52,7 @@ fun AnimationUploadScreen(
     onRemovalClick: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onTagsChanged: (Set<String>) -> Unit,
+    onSaveClick: () -> Unit,
 ) {
     when (uiState) {
         is AnimationUploadUiState.Loading -> {
@@ -71,7 +72,8 @@ fun AnimationUploadScreen(
                 onTagsChanged = onTagsChanged,
                 editableAnimation = uiState.editableAnimation,
                 allTags = uiState.allTags,
-                onRemovalClick = onRemovalClick
+                onRemovalClick = onRemovalClick,
+                onSaveClick = onSaveClick
             )
         }
     }
@@ -87,6 +89,7 @@ fun AnimationUploadForm(
     onPaletteSelected: (Int) -> Unit,
     onUploadClick: () -> Unit,
     onRemovalClick: () -> Unit,
+    onSaveClick: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onTagsChanged: (Set<String>) -> Unit,
 ) {
@@ -107,7 +110,8 @@ fun AnimationUploadForm(
             UploadController(
                 moderationStatus = moderationStatus,
                 onUploadClick = onUploadClick,
-                onRemovalClick = onRemovalClick
+                onRemovalClick = onRemovalClick,
+                onSaveClick = onSaveClick
             )
         }
         if (isCompactWidth) {
@@ -198,7 +202,7 @@ private fun UploadController(
     moderationStatus: ModerationStatus,
     onUploadClick: () -> Unit,
     onRemovalClick: () -> Unit,
-    onSaveClick: () -> Unit = { }
+    onSaveClick: () -> Unit,
 ) {
     var isEnabled by remember(moderationStatus) { mutableStateOf(true) }
     Row(

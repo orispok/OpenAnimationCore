@@ -125,7 +125,20 @@ class AnimationUploadScreenViewModel(
     }
 
 
-    fun onPublishClick() {
+
+
+    fun onTitleChanged(title: String) {
+        animationNameStateFlow.value = title
+    }
+
+    fun onTagsChanged(tags: Set<String>) {
+        tagsStateFlow.value = tags
+    }
+
+
+    private fun commitAnimation(
+        isPublish: Boolean
+    ){
         viewModelScope.launch {
             val currentMeta = animationMetadataFlow.first()
             val currentName = animationNameStateFlow.value ?: currentMeta.name
@@ -145,20 +158,19 @@ class AnimationUploadScreenViewModel(
             )
 
             animationUploader.uploadAnimation(
-                uploadedAnimationMeta = updatedMeta.copy(
+                uploadedAnimationMeta = if(isPublish) updatedMeta.copy(
                     isSubmitted = true
-                ),
+                ) else updatedMeta,
                 animationContent = processedJson,
             )
         }
     }
-
-    fun onTitleChanged(title: String) {
-        animationNameStateFlow.value = title
+    fun onPublishClick() {
+        commitAnimation(true)
     }
 
-    fun onTagsChanged(tags: Set<String>) {
-        tagsStateFlow.value = tags
+    fun onSaveClick() {
+        commitAnimation(false)
     }
 
     fun onRemovalClick(
