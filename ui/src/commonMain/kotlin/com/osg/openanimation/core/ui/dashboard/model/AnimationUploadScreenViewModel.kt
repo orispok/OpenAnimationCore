@@ -32,6 +32,7 @@ import org.koin.core.annotation.Provided
 private data class ModerationMeta(
     val moderation: ModerationStatus,
     val uploadedAnimationMeta: UploadedAnimationMeta,
+    val isUnsaved: Boolean,
 )
 
 @KoinViewModel
@@ -63,6 +64,12 @@ class AnimationUploadScreenViewModel(
         tagsStateFlow,
         metaFetcher.moderationStatusFlow(arg.animationId),
     ) { animationMeta, name, tags, mod ->
+        val isUnsaved = checkUnsavedMeta(
+            title = name,
+            dbTitle = animationMeta.name,
+            tags = tags,
+            dbTags = animationMeta.tags.toSet(),
+        )
         val updatedMeta = animationMeta.copy(
             name = name ?: animationMeta.name,
             tags = tags?.toList() ?: animationMeta.tags,
@@ -70,7 +77,8 @@ class AnimationUploadScreenViewModel(
 
         ModerationMeta(
             moderation = mod,
-            uploadedAnimationMeta = updatedMeta
+            uploadedAnimationMeta = updatedMeta,
+            isUnsaved = isUnsaved
         )
     }
 
@@ -111,15 +119,24 @@ class AnimationUploadScreenViewModel(
             editableAnimation = animationData,
             uploadedAnimationMeta = moderationMeta.uploadedAnimationMeta,
             moderationStatus = moderationMeta.moderation,
-            isUnsaved = (title != null && title != moderationMeta.uploadedAnimationMeta.name) ||
-                    (tags != null && tags.toList() != moderationMeta.uploadedAnimationMeta.tags) ||
-                    (animationData.selectedOptionIndex != lastSavedPaletteIdx.value)
+            isUnsaved = moderationMeta.isUnsaved || (animationData.selectedOptionIndex != lastSavedPaletteIdx.value),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = AnimationUploadUiState.Loading
     )
+
+    private fun checkUnsavedMeta(
+        title: String?,
+        dbTitle: String,
+        tags: Set<String>?,
+        dbTags: Set<String>,
+    ): Boolean{
+        val titleChanged = title != null && title != dbTitle
+        val tagsChanged = tags != null && tags.toList() != dbTags
+        return titleChanged || tagsChanged
+    }
 
 
     fun onPaletteSelected(paletteIdx: Int) {

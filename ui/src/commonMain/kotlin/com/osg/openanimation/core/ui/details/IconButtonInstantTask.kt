@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +76,7 @@ fun IconButtonInstantTask(
                     Icon(
                         imageVector = if (isDone) secondaryIcon else primaryIcon,
                         contentDescription = if (isDone) "Link Copied" else "Copy Link",
-                        tint = iconColor,
+                        tint = if (isEnabled) iconColor else LocalContentColor.current,
                         modifier = Modifier.graphicsLayer(scaleX = iconScale, scaleY = iconScale)
                     )
                 }

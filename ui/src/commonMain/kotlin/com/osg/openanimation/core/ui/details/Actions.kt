@@ -117,6 +117,7 @@ fun IconLoadingButton(
     IconButtonInstantTask(
         modifier = modifier,
         primaryIcon = primaryIcon,
+        isEnabled = isEnabled,
         secondaryIcon = Icons.Default.Check,
         iconAnimationState = iconAnimationState,
         onReturnToIdle = {
