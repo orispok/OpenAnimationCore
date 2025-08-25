@@ -55,15 +55,25 @@ class AnimationUploadScreenViewModel(
         replay = 1
     )
 
-    private val moderationDetailsFlow: Flow<ModerationMeta> = animationMetadataFlow.map { animationMeta ->
+    private val moderationDetailsFlow: Flow<ModerationMeta> = combine(
+        animationMetadataFlow,
+        animationNameStateFlow,
+        tagsStateFlow,
+    )
+    { animationMeta, name, tags ->
         val mod = if (animationMeta.isSubmitted) {
             metaFetcher.fetchAnimationModerationStatus(animationMeta.hash)
         } else {
             ModerationStatus.DRAFT
         }
+        val updatedMeta = animationMeta.copy(
+            name = name ?: animationMeta.name,
+            tags = tags?.toList() ?: animationMeta.tags,
+        )
+
         ModerationMeta(
             moderation = mod,
-            uploadedAnimationMeta = animationMeta
+            uploadedAnimationMeta = updatedMeta
         )
     }
 
