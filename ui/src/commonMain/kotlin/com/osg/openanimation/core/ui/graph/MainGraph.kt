@@ -90,8 +90,11 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     }
 
     composable<EditAnimation> { backStackEntry ->
-        val viewModel = koinViewModel<AnimationUploadScreenViewModel> {
-            parametersOf(backStackEntry.toRoute<EditAnimation>())
+        val arg = backStackEntry.toRoute<EditAnimation>()
+        val viewModel = koinViewModel<AnimationUploadScreenViewModel>(
+            key = arg.animationId
+        ) {
+            parametersOf(arg)
         }
         val uiState by viewModel.uiState.collectAsState()
         AnimationUploadScreen(

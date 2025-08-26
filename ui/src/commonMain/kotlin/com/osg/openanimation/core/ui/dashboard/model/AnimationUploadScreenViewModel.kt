@@ -36,7 +36,7 @@ private data class ModerationMeta(
 @KoinViewModel
 class AnimationUploadScreenViewModel(
     @InjectedParam private val arg: EditAnimation,
-    @Provided private val animationUploader: AnimationUploader
+    @Provided private val animationUploader: AnimationUploader,
 ) : ViewModel() {
 
     private val animationNameStateFlow = MutableStateFlow<String?>(null)
