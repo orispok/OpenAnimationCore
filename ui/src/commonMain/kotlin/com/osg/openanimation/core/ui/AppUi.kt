@@ -10,10 +10,16 @@ import com.osg.openanimation.core.ui.di.domain.AppLinkProvider
 import com.osg.openanimation.core.ui.graph.AppNavigation
 import com.osg.openanimation.core.ui.theme.TrueTheme
 import org.koin.compose.koinInject
+import org.koin.core.annotation.ComponentScan
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.koin.ksp.generated.defaultModule
+import org.koin.ksp.generated.module
+
+@org.koin.core.annotation.Module
+@ComponentScan("com.osg.openanimation.core.**")
+class SharedModule()
+
 
 class BaseApp(
     baseUrl: String,
@@ -23,7 +29,7 @@ class BaseApp(
         val mediaModule = module {
             single<AppLinkProvider> { AppLinkProvider(baseUrl) }
         }
-        val allModules = platformModules + mediaModule + defaultModule
+        val allModules = platformModules + mediaModule + SharedModule().module
         startKoin {
             modules(allModules)
         }

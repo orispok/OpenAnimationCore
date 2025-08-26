@@ -15,4 +15,6 @@ interface AnimationUploader {
     fun uploadedMetaFlow(hash: String): Flow<UploadedAnimationMeta>
 
     suspend fun onRemoveAnimation(hash: String)
+
+    suspend fun fetchUserAnimation(path: String): String
 }

@@ -9,7 +9,6 @@ import com.osg.openanimation.core.ui.color.model.ColorsEditPalette
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.dashboard.AnimationUploadUiState
 import com.osg.openanimation.core.ui.di.domain.AnimationUploader
-import com.osg.openanimation.core.ui.di.domain.StorageService
 import com.osg.openanimation.core.ui.graph.EditAnimation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +36,6 @@ private data class ModerationMeta(
 @KoinViewModel
 class AnimationUploadScreenViewModel(
     @InjectedParam private val arg: EditAnimation,
-    @Provided private val storageService: StorageService,
     @Provided private val animationUploader: AnimationUploader
 ) : ViewModel() {
 
@@ -83,7 +81,7 @@ class AnimationUploadScreenViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val animationColorsEditHandlerFlow: SharedFlow<ColorsEditHandler> =
         animationMetadataFlow.map {
-            val animationJson = storageService.fetchUserAnimation(it.path)
+            val animationJson = animationUploader.fetchUserAnimation(it.path)
             ColorsEditHandler(
                 animationContentLoader = { animationJson },
                 scope = viewModelScope,
