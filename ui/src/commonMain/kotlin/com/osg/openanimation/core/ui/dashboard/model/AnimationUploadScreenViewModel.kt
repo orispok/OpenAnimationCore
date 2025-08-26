@@ -10,7 +10,6 @@ import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.dashboard.AnimationUploadUiState
 import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
 import com.osg.openanimation.core.ui.di.domain.AnimationUploader
-import com.osg.openanimation.core.ui.di.domain.UploadedMetadataRepository
 import com.osg.openanimation.core.ui.graph.EditAnimation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +38,6 @@ private data class ModerationMeta(
 class AnimationUploadScreenViewModel(
     @InjectedParam private val arg: EditAnimation,
     @Provided private val dataFetcher: AnimationContentLoader,
-    @Provided private val metaFetcher: UploadedMetadataRepository,
     @Provided private val animationUploader: AnimationUploader
 ) : ViewModel() {
 
@@ -49,7 +47,7 @@ class AnimationUploadScreenViewModel(
 
     private val lastSavedPaletteIdx = MutableStateFlow(0)
 
-    private val animationMetadataFlow = metaFetcher
+    private val animationMetadataFlow = animationUploader
         .uploadedMetaFlow(arg.animationId)
         .shareIn(
             scope = viewModelScope,
@@ -62,7 +60,7 @@ class AnimationUploadScreenViewModel(
         animationMetadataFlow,
         animationNameStateFlow,
         tagsStateFlow,
-        metaFetcher.moderationStatusFlow(arg.animationId),
+        animationUploader.moderationStatusFlow(arg.animationId),
     ) { animationMeta, name, tags, mod ->
         val isUnsaved = checkUnsavedMeta(
             title = name,
@@ -201,7 +199,7 @@ class AnimationUploadScreenViewModel(
     ) {
         viewModelScope.launch {
             val currentMeta = animationMetadataFlow.first()
-            metaFetcher.onRemoveAnimation(currentMeta.hash)
+            animationUploader.onRemoveAnimation(currentMeta.hash)
             onRemoved()
         }
     }

@@ -25,22 +25,24 @@ import org.koin.core.annotation.Provided
 class DashboardViewModel(
     @Provided private val dataFetcher: AnimationContentLoader,
     @Provided private val userRepository: UserRepository,
-): ViewModel() {
+) : ViewModel() {
 
-    private val signedInFlow: Flow<DashboardUiState> = userRepository.userAnimationsFlow().map {uploadedAnimations ->
-        if (uploadedAnimations.isEmpty()) {
-            DashboardUiState.Empty
-        } else {
-            DashboardUiState.UploadedCollection(
-                animations = uploadedAnimations.map(::toUiData),
-            )
-        }
-    }
+    private fun signedInFlow(uid: String): Flow<DashboardUiState> =
+        userRepository.userAnimationsFlow(uid)
+            .map { uploadedAnimations ->
+                if (uploadedAnimations.isEmpty()) {
+                    DashboardUiState.Empty
+                } else {
+                    DashboardUiState.UploadedCollection(
+                        animations = uploadedAnimations.map(::toUiData),
+                    )
+                }
+            }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<DashboardUiState> = userRepository.profileFlow.flatMapLatest{
-        when(it) {
-            is UserSessionState.SignedIn -> signedInFlow
+    val uiState: StateFlow<DashboardUiState> = userRepository.profileFlow.flatMapLatest {
+        when (it) {
+            is UserSessionState.SignedIn -> signedInFlow(it.userProfile.uid)
             UserSessionState.SignedOut -> flowOf(DashboardUiState.SignedOut)
         }
 
@@ -49,7 +51,6 @@ class DashboardViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = DashboardUiState.Loading
     )
-
 
 
     private fun toUiData(meta: UploadedAnimationMeta) = UploadedAnimationUiData(

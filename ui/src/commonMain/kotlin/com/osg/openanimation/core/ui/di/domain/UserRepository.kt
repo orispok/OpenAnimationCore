@@ -24,7 +24,7 @@ interface UserRepository{
     suspend fun likeAnimation(hash: String)
     suspend fun dislikeAnimation(hash: String)
 
-    fun userAnimationsFlow(): Flow<List<UploadedAnimationMeta>>
+    fun userAnimationsFlow(uid: String): Flow<List<UploadedAnimationMeta>>
 
     fun onUserSignOut()
     fun onRegistered(signInResultState: Result<SignInResult>)
