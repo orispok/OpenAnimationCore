@@ -20,6 +20,7 @@ fun LoadingAnimation(
     )
 }
 
+@Composable
 fun animationResource(
     fileName: String,
 ): AnimationDataState.LazyLoading{

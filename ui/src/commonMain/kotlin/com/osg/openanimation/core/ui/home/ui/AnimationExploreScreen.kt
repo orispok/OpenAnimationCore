@@ -1,23 +1,31 @@
 package com.osg.openanimation.core.ui.home.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.graph.SelectedQueryType
-import com.osg.openanimation.core.ui.graph.Destination
-import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.components.lottie.AnimationCaptionCard
+import com.osg.openanimation.core.ui.graph.Destination
+import com.osg.openanimation.core.ui.graph.SelectedQueryType
+import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
 import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
 
@@ -58,7 +66,10 @@ fun AnimationGrid(
             key = { it.metadata.hash },
         ) { animationsData ->
             AnimationCaptionCard(
-                modifier = Modifier.padding(horizontal = 8.dp).width(300.dp).height(400.dp),
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .width(300.dp)
+                    .height(400.dp),
                 animationData = animationsData,
                 onClick = {
                     onDestination(

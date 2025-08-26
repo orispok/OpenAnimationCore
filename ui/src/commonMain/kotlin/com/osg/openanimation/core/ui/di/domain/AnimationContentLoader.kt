@@ -7,4 +7,5 @@ fun interface AnimationContentLoader {
 interface StorageService {
     suspend fun uploadAnimationContent(path: String, content: ByteArray)
     suspend fun removeAnimationContent(path: String)
+    suspend fun fetchUserAnimation(path: String): String
 }

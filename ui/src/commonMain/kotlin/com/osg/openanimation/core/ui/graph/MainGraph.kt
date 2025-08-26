@@ -31,7 +31,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         }
         val uiState by mainViewModel.uiState.collectAsState()
         HomePanel(
-            modifier = Modifier.Companion,
+            modifier = Modifier,
             uiData = uiState,
             onNavigation = { dst ->
                 navController.navigate(dst)

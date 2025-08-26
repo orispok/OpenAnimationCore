@@ -6,7 +6,7 @@ import com.osg.openanimation.core.data.upload.UploadedAnimationMeta
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.dashboard.state.DashboardUiState
 import com.osg.openanimation.core.ui.dashboard.state.UploadedAnimationUiData
-import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.StorageService
 import com.osg.openanimation.core.ui.di.domain.UserRepository
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +23,7 @@ import org.koin.core.annotation.Provided
 
 @KoinViewModel
 class DashboardViewModel(
-    @Provided private val dataFetcher: AnimationContentLoader,
+    @Provided private val storageService: StorageService,
     @Provided private val userRepository: UserRepository,
 ) : ViewModel() {
 
@@ -57,7 +57,7 @@ class DashboardViewModel(
         animationState = AnimationDataState.LazyLoading(
             hash = meta.path,
             lazyLoader = {
-                dataFetcher.fetchAnimationByPath(meta.path)
+                storageService.fetchUserAnimation(meta.path)
             }
         ),
         metadata = meta

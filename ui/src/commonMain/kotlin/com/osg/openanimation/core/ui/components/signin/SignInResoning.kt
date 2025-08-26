@@ -9,7 +9,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -74,11 +73,9 @@ fun SignInReasoningContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val animationsState = remember {
-            animationResource(
-                "sign_in_first_animation.json"
-            )
-        }
+        val animationsState = animationResource(
+            "sign_in_first_animation.json"
+        )
 
         LottieAnimationView(
             animationData = animationsState,
