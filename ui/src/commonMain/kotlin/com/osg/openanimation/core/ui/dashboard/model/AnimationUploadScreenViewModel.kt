@@ -134,7 +134,7 @@ class AnimationUploadScreenViewModel(
         dbTags: Set<String>,
     ): Boolean{
         val titleChanged = title != null && title != dbTitle
-        val tagsChanged = tags != null && tags.toList() != dbTags
+        val tagsChanged = tags != null && tags != dbTags
         return titleChanged || tagsChanged
     }
 
