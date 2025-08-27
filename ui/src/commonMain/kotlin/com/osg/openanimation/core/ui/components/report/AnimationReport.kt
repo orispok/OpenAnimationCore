@@ -1,20 +1,43 @@
 package com.osg.openanimation.core.ui.components.report
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
 import com.osg.openanimation.core.data.animation.AnimationMetadata
 import com.osg.openanimation.core.data.report.ReportReasonOptions
-import com.osg.openanimation.core.data.report.ReportSubmission
+import kotlinx.coroutines.delay
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
@@ -23,7 +46,7 @@ fun AnimationReport(
     onDismissRequest: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-        val reportViewModel = viewModel { ReportViewModel() }
+        val reportViewModel = koinViewModel<ReportViewModel>()
         val uiState by reportViewModel.uiState.collectAsState()
         when(val reportState = uiState){
             is ReportUiState.Initial -> {
@@ -82,16 +105,64 @@ fun AnimationReportProcess(
                         onDismiss()
                     }
                 }
+
+
+                is ReportUiState.SubmitProcess.Failed -> {
+                    SubmitFiledDialog(
+                        reason = submitProcess.reason,
+                        onDismissRequest = onDismiss
+                    )
+                }
             }
         }
     }
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SubmitFiledDialog(
+    reason: FailedReason,
+    onDismissRequest: () -> Unit,
+){
+    Card(
+        modifier = Modifier.padding(16.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = when(reason){
+                    FailedReason.NetworkError -> "Submission Failed"
+                    FailedReason.NotSignedIn -> "Not Signed In"
+                },
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = when(reason){
+                    FailedReason.NetworkError -> "There was a network error while submitting your report. Please check your connection and try again."
+                    FailedReason.NotSignedIn -> "You must be signed in to submit a report. Please sign in and try again."
+                },
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onDismissRequest) {
+                Text("OK")
+            }
+        }
+    }
+}
+
 @Composable
 fun AnimationReportContent(
     animationMetadata: AnimationMetadata,
-    onReportClick: (ReportSubmission) -> Unit,
+    onReportClick: (ReportSubmissionUi) -> Unit,
     onDismiss: () -> Unit
 ) {
     var selectedReason by remember { mutableStateOf(ReportReasonOptions.INAPPROPRIATE) }
@@ -208,10 +279,10 @@ fun AnimationReportContent(
                 Button(
                     onClick = {
                         onReportClick(
-                            ReportSubmission(
+                            ReportSubmissionUi(
                                 reason = selectedReason,
                                 moreInfo = additionalInfo,
-                                animationHash = animationMetadata.hash
+                                animationHash = animationMetadata.hash,
                             )
                         )
                     },

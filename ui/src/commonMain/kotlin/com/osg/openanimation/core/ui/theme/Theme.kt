@@ -6,8 +6,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.LayoutDirection
-import com.osg.openanimation.core.ui.di.AppLinkProvider
-import com.osg.openanimation.core.ui.di.LocalLinkProvider
+import com.osg.openanimation.core.ui.di.domain.AppLinkProvider
+import com.osg.openanimation.core.ui.di.domain.LocalLinkProvider
 import com.osg.openanimation.core.ui.generated.resources.Res
 import com.osg.openanimation.core.ui.generated.resources.lora_variable_font_wght
 import org.jetbrains.compose.resources.Font

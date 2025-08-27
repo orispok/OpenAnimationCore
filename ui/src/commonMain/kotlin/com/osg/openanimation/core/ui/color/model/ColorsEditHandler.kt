@@ -3,7 +3,7 @@ package com.osg.openanimation.core.ui.color.model
 import androidx.compose.ui.graphics.Color
 import com.osg.openanimation.core.ui.color.util.getKMostDifferentColors
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
-import com.osg.openanimation.core.ui.di.AnimationContentLoader
+import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,12 +31,8 @@ class ColorsEditHandler(
     private val scope: CoroutineScope,
 ){
     private val transformOptionsList by lazy {
-        val hueValues = listOf(
-            0f, 60f, 180f, 240f
-        )
-        val chromaValues = listOf(
-            0f, 60f, 120f
-        )
+        val hueValues = (0..360 step 45).take(6).map { it.toFloat() }
+        val chromaValues = (0..150 step 30).take(3).map { it.toFloat() }
         buildList {
             for (hue in hueValues) {
                 for (chroma in chromaValues) {

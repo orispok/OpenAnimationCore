@@ -8,14 +8,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 enum class IconAnimationState {
     IDLE,
@@ -28,6 +30,7 @@ fun IconButtonInstantTask(
     modifier: Modifier = Modifier,
     primaryIcon: ImageVector,
     secondaryIcon: ImageVector,
+    isEnabled: Boolean = true,
     iconAnimationState: IconAnimationState,
     onReturnToIdle: () -> Unit,
     onClick: () -> Unit,
@@ -43,7 +46,7 @@ fun IconButtonInstantTask(
     IconButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = iconAnimationState != IconAnimationState.LOADING
+        enabled = iconAnimationState != IconAnimationState.LOADING && isEnabled
     ) {
         AnimatedContent(
             targetState = iconAnimationState,
@@ -73,7 +76,7 @@ fun IconButtonInstantTask(
                     Icon(
                         imageVector = if (isDone) secondaryIcon else primaryIcon,
                         contentDescription = if (isDone) "Link Copied" else "Copy Link",
-                        tint = iconColor,
+                        tint = if (isEnabled) iconColor else LocalContentColor.current,
                         modifier = Modifier.graphicsLayer(scaleX = iconScale, scaleY = iconScale)
                     )
                 }

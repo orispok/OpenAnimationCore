@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.osg.openanimation.core.ui.components.loading.animationResource
 import com.osg.openanimation.core.ui.components.lottie.LottieAnimationView
-import com.osg.openanimation.core.ui.di.SignInProviderFactory
-import com.osg.openanimation.core.ui.di.UserRepository
+import com.osg.openanimation.core.ui.di.domain.SignInProviderFactory
+import com.osg.openanimation.core.ui.di.domain.UserRepository
 import org.koin.compose.koinInject
 
 @Composable
@@ -51,9 +51,9 @@ fun SignInReasoningDialog(
 @Composable
 fun SignInReasoningDialogView(
     modifier: Modifier = Modifier,
+    signInService: SignInProviderFactory = koinInject(),
+    userRepository: UserRepository = koinInject()
 ){
-    val signInService: SignInProviderFactory = koinInject()
-    val userRepository: UserRepository = koinInject()
     SignInReasoningContent(
         signInProviders = signInService.buildSignInProviders(),
         modifier = modifier,
@@ -76,6 +76,7 @@ fun SignInReasoningContent(
         val animationsState = animationResource(
             "sign_in_first_animation.json"
         )
+
         LottieAnimationView(
             animationData = animationsState,
             modifier = Modifier

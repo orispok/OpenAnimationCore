@@ -16,4 +16,6 @@ data class AnimationMetadata(
     val license: LicenseType = LicenseType.UNKNOWN,
     val category: AnimationCategory = AnimationCategory.UNKNOWN,
     val tags: Set<String> = emptySet(),
+    val uploaderUid: String? = null,
+    val moderationUid: String? = null,
 )

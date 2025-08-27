@@ -27,6 +27,6 @@ fun animationResource(
     return AnimationDataState.LazyLoading(
         fileName,
     ){
-        Res.readBytes(fileName).decodeToString()
+        Res.readBytes("files/$fileName").decodeToString()
     }
 }

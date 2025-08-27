@@ -16,4 +16,5 @@ data class ReportSubmission(
     val reason: ReportReasonOptions,
     val moreInfo: String,
     val animationHash: String,
+    val uid: String,
 )

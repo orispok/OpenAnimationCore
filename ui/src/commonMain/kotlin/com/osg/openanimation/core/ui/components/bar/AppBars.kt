@@ -4,24 +4,53 @@ package com.osg.openanimation.core.ui.components.bar
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.di.UserSessionState
-import com.osg.openanimation.core.ui.di.data.SelectedQueryType
+import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
+import com.osg.openanimation.core.ui.dashboard.JsonImportDialog
+import com.osg.openanimation.core.ui.di.domain.UserSessionState
+import com.osg.openanimation.core.ui.graph.Dashboard
+import com.osg.openanimation.core.ui.graph.Destination
+import com.osg.openanimation.core.ui.graph.EditAnimation
+import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.util.icons.Tag
+import com.osg.openanimation.core.ui.util.icons.Upload
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
 
@@ -32,7 +61,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     onSignOutClick: () -> Unit,
-    onSearchItemSelected: (SelectedQueryType) -> Unit
+    onNavigate: (Destination) -> Unit
 ) {
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -44,7 +73,9 @@ fun OpenNavSuiteScope.SearchAnimationBar(
         if (expanded) {
             SearchBar(
                 onSearchItemSelected = {
-                    onSearchItemSelected(it)
+                    onNavigate(
+                        Destination.Home(it)
+                    )
                     onToggleSearch(false)
                 },
                 onQueryChange = { query = it },
@@ -64,9 +95,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
                 onSearchClick = {
                     onToggleSearch(isShowSearchField.not())
                 },
-                onLogoClick = {
-                    onSearchItemSelected(SelectedQueryType.ExploreCategory.Trending)
-                },
+                onNavigate = onNavigate,
             )
         }
     }
@@ -76,7 +105,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
 fun OpenNavSuiteScope.RegularAppBar(
     userSessionState: UserSessionState,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onLogoClick: () -> Unit,
+    onNavigate: (Destination) -> Unit,
     onSearchClick: () -> Unit,
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -96,7 +125,11 @@ fun OpenNavSuiteScope.RegularAppBar(
                     }
                 }
                 Spacer(Modifier.width(8.dp))
-                IconButton(onClick = onLogoClick) {
+                IconButton(onClick = {
+                    onNavigate(
+                        Destination.Home(SelectedQueryType.ExploreCategory.Trending)
+                    )
+                }) {
                     Icon(
                         imageVector = LogoVector,
                         contentDescription = "Localized description",
@@ -107,6 +140,8 @@ fun OpenNavSuiteScope.RegularAppBar(
         },
         title = {},
         actions = {
+
+
             if (isNavDrawer) {
                 IconButton(onClick = onSearchClick) {
                     Icon(
@@ -115,6 +150,12 @@ fun OpenNavSuiteScope.RegularAppBar(
                     )
                 }
             }
+
+            UploadButtonBar(
+                isSignedIn = userSessionState is UserSessionState.SignedIn,
+                onNavigate = onNavigate
+            )
+
             val uriHandler = LocalUriHandler.current
             IconButton(onClick = {
                 uriHandler.openUri("https://github.com/orispok/OpenAnimationApp")
@@ -128,7 +169,17 @@ fun OpenNavSuiteScope.RegularAppBar(
             when (userSessionState) {
                 is UserSessionState.SignedIn -> {
                     UserProfileSignedInButton(
-                        onLogoutClick = onSignOutClick
+                        onLogoutClick = onSignOutClick,
+                        onNavigateToProfile ={
+                            onNavigate(
+                                Destination.Account
+                            )
+                        },
+                        onNavigateToDashboard = {
+                            onNavigate(
+                                Dashboard
+                            )
+                        },
                     )
                 }
                 UserSessionState.SignedOut -> {
@@ -141,6 +192,39 @@ fun OpenNavSuiteScope.RegularAppBar(
     )
 }
 
+@Composable
+fun UploadButtonBar(
+    isSignedIn: Boolean,
+    onNavigate: (Destination) -> Unit
+){
+    var openDialog by remember { mutableStateOf(false) }
+    IconButton(onClick = {
+        openDialog = true
+    }) {
+        Icon(
+            imageVector = Icons.Filled.Upload,
+            contentDescription = "Upload",
+        )
+    }
+
+    if (openDialog){
+        if (isSignedIn) {
+            JsonImportDialog(
+                openDialog = openDialog,
+                onAnimationEdit = {
+                    onNavigate(EditAnimation(it))
+                }
+            ){
+                openDialog = false
+            }
+        }else{
+            SignInReasoningDialog {
+                openDialog = false
+            }
+        }
+    }
+
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
