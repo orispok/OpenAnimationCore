@@ -42,11 +42,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
+import com.osg.openanimation.core.ui.dashboard.JsonImportDialog
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import com.osg.openanimation.core.ui.graph.Dashboard
 import com.osg.openanimation.core.ui.graph.Destination
+import com.osg.openanimation.core.ui.graph.EditAnimation
 import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.util.icons.Tag
+import com.osg.openanimation.core.ui.util.icons.Upload
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
 
@@ -136,6 +140,8 @@ fun OpenNavSuiteScope.RegularAppBar(
         },
         title = {},
         actions = {
+
+
             if (isNavDrawer) {
                 IconButton(onClick = onSearchClick) {
                     Icon(
@@ -144,6 +150,12 @@ fun OpenNavSuiteScope.RegularAppBar(
                     )
                 }
             }
+
+            UploadButtonBar(
+                isSignedIn = userSessionState is UserSessionState.SignedIn,
+                onNavigate = onNavigate
+            )
+
             val uriHandler = LocalUriHandler.current
             IconButton(onClick = {
                 uriHandler.openUri("https://github.com/orispok/OpenAnimationApp")
@@ -180,6 +192,39 @@ fun OpenNavSuiteScope.RegularAppBar(
     )
 }
 
+@Composable
+fun UploadButtonBar(
+    isSignedIn: Boolean,
+    onNavigate: (Destination) -> Unit
+){
+    var openDialog by remember { mutableStateOf(false) }
+    IconButton(onClick = {
+        openDialog = true
+    }) {
+        Icon(
+            imageVector = Icons.Filled.Upload,
+            contentDescription = "Upload",
+        )
+    }
+
+    if (openDialog){
+        if (isSignedIn) {
+            JsonImportDialog(
+                openDialog = openDialog,
+                onAnimationEdit = {
+                    onNavigate(EditAnimation(it))
+                }
+            ){
+                openDialog = false
+            }
+        }else{
+            SignInReasoningDialog {
+                openDialog = false
+            }
+        }
+    }
+
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(

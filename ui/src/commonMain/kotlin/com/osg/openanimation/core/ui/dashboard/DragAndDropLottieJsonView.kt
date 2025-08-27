@@ -26,6 +26,7 @@ import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.osg.openanimation.core.ui.dashboard.dragAndDrop.resolveDroppedContent
 import com.osg.openanimation.core.ui.dashboard.filepicker.FilePicker
 import com.osg.openanimation.core.ui.di.domain.AnimationUploader
@@ -34,7 +35,25 @@ import org.koin.compose.koinInject
 
 
 @Composable
-fun DragAndDropLottieJsonViewManger(
+fun JsonImportDialog(
+    openDialog: Boolean,
+    onAnimationEdit: (String) -> Unit,
+    onClose: () -> Unit,
+) {
+    if (openDialog) {
+        Dialog(
+            onDismissRequest = onClose,
+        ) {
+            JsonAnimationDropTarget { animationId ->
+                onClose()
+                onAnimationEdit(animationId)
+            }
+        }
+    }
+}
+
+@Composable
+fun JsonAnimationDropTarget(
     modifier: Modifier = Modifier,
     animationUploader: AnimationUploader = koinInject(),
     onNavigateToDetails: (String) -> Unit,

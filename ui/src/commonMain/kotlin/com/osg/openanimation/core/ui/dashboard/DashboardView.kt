@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.osg.openanimation.core.data.upload.UploadedAnimationMeta
 import com.osg.openanimation.core.ui.components.lottie.AnimationCard
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialogView
@@ -51,7 +50,7 @@ fun DashboardView(
             }
 
             is DashboardUiState.Empty -> {
-                DragAndDropLottieJsonViewManger{
+                JsonAnimationDropTarget {
                     onAnimationEdit(it)
                 }
             }
@@ -80,18 +79,12 @@ fun DashboardView(
                 }
             }
         }
-        if( openDialog){
-            Dialog(
-                onDismissRequest = {  openDialog = false },
-            ) {
-                DragAndDropLottieJsonViewManger{ animationId ->
-                    openDialog = false
-                    onAnimationEdit(animationId)
-                }
-            }
+        JsonImportDialog(openDialog, onAnimationEdit){
+            openDialog = false
         }
     }
 }
+
 
 
 @Composable
@@ -101,7 +94,7 @@ fun UploadedCollectionView(
     onAnimationClick: (String) -> Unit,
     onUploadNewAnimationButtonPress: () -> Unit,
 ) {
-    val columnCount = when(currentScreenWidthClass){
+    val columnCount = when (currentScreenWidthClass) {
         ScreenSizeClass.COMPACT -> 1
         ScreenSizeClass.MEDIUM -> 2
         ScreenSizeClass.EXPANDED -> 3
@@ -122,7 +115,6 @@ fun UploadedCollectionView(
                     Text(text = "Upload Animations")
                 }
             }
-
         }
         items(
             items = uploadedAnimations,
