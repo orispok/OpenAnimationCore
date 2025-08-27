@@ -31,12 +31,8 @@ class ColorsEditHandler(
     private val scope: CoroutineScope,
 ){
     private val transformOptionsList by lazy {
-        val hueValues = listOf(
-            0f, 60f, 180f, 240f
-        )
-        val chromaValues = listOf(
-            0f, 60f, 120f
-        )
+        val hueValues = (0..360 step 45).take(6).map { it.toFloat() }
+        val chromaValues = (0..150 step 30).take(3).map { it.toFloat() }
         buildList {
             for (hue in hueValues) {
                 for (chroma in chromaValues) {
