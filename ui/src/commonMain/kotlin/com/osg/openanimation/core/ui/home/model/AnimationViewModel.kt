@@ -28,10 +28,6 @@ class AnimationViewModel(
     @Provided userRepository: UserRepository,
 ) : ViewModel(){
 
-    init {
-        println("initialQueryType = $initialQueryType")
-    }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<ExploreScreenStates> = userRepository.profileFlow.mapLatest {
         resolveUiState(
