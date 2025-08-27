@@ -6,4 +6,6 @@
     <string name="explore">Explore</string>
     <string name="report">Report</string>
     <string name="dashboard">Dashboard</string>
+    <string name="account">Account</string>
+
 </resources>

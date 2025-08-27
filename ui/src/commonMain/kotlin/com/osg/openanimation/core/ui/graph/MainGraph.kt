@@ -18,6 +18,8 @@ import com.osg.openanimation.core.ui.details.model.AnimationDetailsViewModel
 import com.osg.openanimation.core.ui.details.model.ds.DetailsScreenStates
 import com.osg.openanimation.core.ui.home.model.AnimationViewModel
 import com.osg.openanimation.core.ui.home.ui.HomePanel
+import com.osg.openanimation.core.ui.profile.model.ProfileEditorViewModel
+import com.osg.openanimation.core.ui.profile.ui.ProfileEditorScreenWrapper
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -111,5 +113,17 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             },
             onSaveClick = viewModel::onSaveClick
         )
+    }
+
+    composable<Destination.Account> { backStackEntry ->
+        val viewModel = koinViewModel<ProfileEditorViewModel>()
+        val uiState by viewModel.uiState.collectAsState()
+        ProfileEditorScreenWrapper(
+            modifier = Modifier.Companion,
+            profileScreenState = uiState,
+            saveProfile = viewModel::saveProfile,
+        )
+
+
     }
 }

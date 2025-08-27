@@ -23,6 +23,9 @@ sealed interface Destination{
         }
     }
 
+    @Serializable @SerialName("Account")
+    data object Account : Destination
+
 
     @Serializable @SerialName("AnimationDetails")
     data class AnimationDetails(

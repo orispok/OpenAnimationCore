@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
+import com.osg.openanimation.core.ui.graph.Dashboard
+import com.osg.openanimation.core.ui.graph.Destination
 import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.util.icons.Tag
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
@@ -55,7 +57,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     onSignOutClick: () -> Unit,
-    onSearchItemSelected: (SelectedQueryType) -> Unit
+    onNavigate: (Destination) -> Unit
 ) {
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -67,7 +69,9 @@ fun OpenNavSuiteScope.SearchAnimationBar(
         if (expanded) {
             SearchBar(
                 onSearchItemSelected = {
-                    onSearchItemSelected(it)
+                    onNavigate(
+                        Destination.Home(it)
+                    )
                     onToggleSearch(false)
                 },
                 onQueryChange = { query = it },
@@ -87,9 +91,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
                 onSearchClick = {
                     onToggleSearch(isShowSearchField.not())
                 },
-                onLogoClick = {
-                    onSearchItemSelected(SelectedQueryType.ExploreCategory.Trending)
-                },
+                onNavigate = onNavigate,
             )
         }
     }
@@ -99,7 +101,7 @@ fun OpenNavSuiteScope.SearchAnimationBar(
 fun OpenNavSuiteScope.RegularAppBar(
     userSessionState: UserSessionState,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onLogoClick: () -> Unit,
+    onNavigate: (Destination) -> Unit,
     onSearchClick: () -> Unit,
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -119,7 +121,11 @@ fun OpenNavSuiteScope.RegularAppBar(
                     }
                 }
                 Spacer(Modifier.width(8.dp))
-                IconButton(onClick = onLogoClick) {
+                IconButton(onClick = {
+                    onNavigate(
+                        Destination.Home(SelectedQueryType.ExploreCategory.Trending)
+                    )
+                }) {
                     Icon(
                         imageVector = LogoVector,
                         contentDescription = "Localized description",
@@ -151,7 +157,17 @@ fun OpenNavSuiteScope.RegularAppBar(
             when (userSessionState) {
                 is UserSessionState.SignedIn -> {
                     UserProfileSignedInButton(
-                        onLogoutClick = onSignOutClick
+                        onLogoutClick = onSignOutClick,
+                        onNavigateToProfile ={
+                            onNavigate(
+                                Destination.Account
+                            )
+                        },
+                        onNavigateToDashboard = {
+                            onNavigate(
+                                Dashboard
+                            )
+                        },
                     )
                 }
                 UserSessionState.SignedOut -> {

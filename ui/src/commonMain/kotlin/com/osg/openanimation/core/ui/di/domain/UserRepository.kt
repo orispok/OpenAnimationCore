@@ -28,4 +28,6 @@ interface UserRepository{
 
     fun onUserSignOut()
     fun onRegistered(signInResultState: Result<SignInResult>)
+
+    suspend fun updateProfile(userProfile: UserProfile)
 }

@@ -59,10 +59,8 @@ fun AppNavigation(
                 )
                 val userSessionState by userRepository.profileFlow.collectAsState(UserSessionState.SignedOut)
                 SearchAnimationBar(
-                    onSearchItemSelected = {
-                        navController.navigate(
-                            Destination.Home(it)
-                        )
+                    onNavigate = {
+                        navController.navigate(it)
                     },
                     categories = animationCatalogState.map(SelectedQueryType::Tag),
                     modifier = Modifier,

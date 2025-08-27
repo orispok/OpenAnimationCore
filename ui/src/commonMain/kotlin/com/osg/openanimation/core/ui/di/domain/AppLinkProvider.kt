@@ -28,6 +28,10 @@ data class AppLinkProvider(
                 val serialName = EditAnimation.serializer().descriptor.serialName
                 "$serialName/${destination.animationId}"
             }
+
+            Destination.Account -> {
+                Destination.Account.serializer().descriptor.serialName
+            }
         }
         return "$hostUrl/#$destinationPath"
     }
