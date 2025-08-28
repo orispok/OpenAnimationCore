@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -572,12 +573,13 @@ fun PreviewCard(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                val uriHandler = LocalUriHandler.current
                 if (linkedinUrl.isNotEmpty()) {
                     SocialIconButton(
                         icon = SocialIconPack.LinkedinMonoVec, // Replace with LinkedIn icon if available
                         contentDescription = "LinkedIn",
                         onClick = {
-                            // TODO: Open LinkedIn URL cross-platform (actual implementation required)
+                            uriHandler.openUri(linkedinUrl)
                         }
                     )
                 }
@@ -586,7 +588,7 @@ fun PreviewCard(
                         icon = githubVector, // Replace with GitHub icon if available
                         contentDescription = "GitHub",
                         onClick = {
-                            // TODO: Open GitHub URL cross-platform (actual implementation required)
+                            uriHandler.openUri(githubUrl)
                         }
                     )
                 }
