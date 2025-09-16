@@ -1,5 +1,6 @@
 package com.osg.openanimation.core.ui.home.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,7 +11,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -30,6 +33,7 @@ import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
 import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnimationGrid(
     screenData: ExploreScreenStates.Success,
@@ -43,6 +47,9 @@ fun AnimationGrid(
     }
     LazyVerticalGrid(
         modifier = modifier,
+        state = rememberLazyGridState(
+            cacheWindow = LazyLayoutCacheWindow(ahead = 300.dp, behind = 300.dp)
+        ),
         columns = GridCells.Fixed(columnCount),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalArrangement = Arrangement.spacedBy(16.dp),
