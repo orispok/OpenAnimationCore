@@ -25,11 +25,7 @@ kotlin {
     }
     iosArm64()
     iosSimulatorArm64()
-    jvm{
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
+    jvm()
     sourceSets {
         commonMain{
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
@@ -39,13 +35,13 @@ kotlin {
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material3)
                 implementation(compose.ui)
-                implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(compose.components.resources)
                 implementation(compose.preview)
 
-                implementation(libs.material.adaptive)
+                implementation(libs.material3)
+                implementation(libs.material3.adaptive)
+                implementation(libs.material3.navigation.suite)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.serialization.core)

@@ -12,6 +12,7 @@ enum class ScreenSizeClass {
 val currentScreenWidthClass: ScreenSizeClass
     @Composable
     get() {
+//        return ScreenSizeClass.MEDIUM
         val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
         return if(windowSizeClass.isWidthAtLeastBreakpoint(840)){
             ScreenSizeClass.EXPANDED
