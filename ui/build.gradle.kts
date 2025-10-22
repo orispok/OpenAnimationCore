@@ -43,9 +43,9 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+                implementation(compose.preview)
 
-                implementation(libs.adaptive)
+                implementation(libs.material.adaptive)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.serialization.core)
