@@ -40,7 +40,7 @@ kotlin {
                 implementation(libs.ui.tooling.preview)
 
                 implementation(libs.material3)
-                implementation(libs.material.adaptive)
+                implementation(libs.material3.adaptive)
                 implementation(libs.material3.navigation.suite)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
