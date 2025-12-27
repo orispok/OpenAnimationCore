@@ -9,6 +9,7 @@ import com.osg.openanimation.core.ui.dashboard.state.UploadedAnimationUiData
 import com.osg.openanimation.core.ui.di.domain.AnimationUploader
 import com.osg.openanimation.core.ui.di.domain.UserRepository
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,7 +35,7 @@ class DashboardViewModel(
                     DashboardUiState.Empty
                 } else {
                     DashboardUiState.UploadedCollection(
-                        animations = uploadedAnimations.map(::toUiData),
+                        animations = uploadedAnimations.map(::toUiData).toImmutableList(),
                     )
                 }
             }

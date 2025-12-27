@@ -31,6 +31,7 @@ import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
 import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
+import kotlinx.collections.immutable.ImmutableList
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -96,7 +97,7 @@ fun AnimationGrid(
 @Composable
 fun CategoryChips(
     modifier: Modifier = Modifier,
-    categories: List<SelectedQueryType.Tag>,
+    categories: ImmutableList<SelectedQueryType.Tag>,
     onTagClicked: (SelectedQueryType) -> Unit,
     selectedTag: SelectedQueryType
 ) {

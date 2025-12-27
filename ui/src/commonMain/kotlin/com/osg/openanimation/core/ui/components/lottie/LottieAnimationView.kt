@@ -21,7 +21,7 @@ import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieAnimatable
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
-import org.koin.core.annotation.ComponentScan
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun LottieAnimationView(
@@ -69,7 +69,7 @@ fun LottieAnimationView(
 @Composable
 fun lottieClippedAnimation(
     animationData: AnimationDataState.LazyLoading,
-    animationClips: List<ClipSpecProgress>,
+    animationClips: ImmutableList<ClipSpecProgress>,
     clipIdx: Int,
     speed: Float = 1.25f,
     onProgressChanged: (Float) -> Unit = {},

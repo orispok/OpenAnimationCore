@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -29,7 +30,7 @@ import kotlin.math.roundToInt
 @Composable
 fun ColorPaletteOptionsView(
     modifier: Modifier = Modifier,
-    transformOptions: List<List<Color>>,
+    transformOptions: ImmutableList<ImmutableList<Color>>,
     selectedIndex: Int,
     onPalletSelect: (Int) -> Unit
 ) {
@@ -81,7 +82,7 @@ fun ColorPaletteOptionsView(
 @Composable
 fun ColorPaletteView(
     modifier: Modifier = Modifier,
-    transformedColors: List<Color>,
+    transformedColors: ImmutableList<Color>,
 ) {
     ElevatedCard(
         modifier = modifier

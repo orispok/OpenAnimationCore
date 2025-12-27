@@ -1,5 +1,6 @@
 package com.osg.openanimation.core.ui.components.report
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.osg.openanimation.core.data.report.ReportReasonOptions
@@ -30,6 +31,7 @@ sealed interface ReportUiState {
     }
 }
 
+@Immutable
 data class ReportSubmissionUi(
     val reason: ReportReasonOptions,
     val moreInfo: String,

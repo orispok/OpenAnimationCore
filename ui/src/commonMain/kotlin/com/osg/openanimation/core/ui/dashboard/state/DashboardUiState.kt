@@ -3,6 +3,7 @@ package com.osg.openanimation.core.ui.dashboard.state
 import androidx.compose.runtime.Immutable
 import com.osg.openanimation.core.data.upload.UploadedAnimationMeta
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
+import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 data class UploadedAnimationUiData(
@@ -14,7 +15,8 @@ sealed interface DashboardUiState {
     data object  Loading : DashboardUiState
     data object SignedOut : DashboardUiState
     data object Empty: DashboardUiState
+    @Immutable
     data class UploadedCollection(
-        val animations: List<UploadedAnimationUiData>,
+        val animations: ImmutableList<UploadedAnimationUiData>,
     ) : DashboardUiState
 }

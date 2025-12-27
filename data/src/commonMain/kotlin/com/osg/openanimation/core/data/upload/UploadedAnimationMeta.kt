@@ -1,7 +1,9 @@
 package com.osg.openanimation.core.data.upload
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class UploadedAnimationMeta(
     val hash: String,

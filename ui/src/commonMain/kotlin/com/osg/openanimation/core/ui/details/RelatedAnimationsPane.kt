@@ -6,13 +6,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.osg.openanimation.core.ui.home.domain.AnimationUiData
 import com.osg.openanimation.core.ui.components.lottie.AnimationCaptionCard
+import com.osg.openanimation.core.ui.home.domain.AnimationUiData
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun RelatedAnimationsPane(
     modifier: Modifier = Modifier,
-    relatedAnimations: List<AnimationUiData>,
+    relatedAnimations: ImmutableList<AnimationUiData>,
     onAnimationClicked: (AnimationUiData) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {

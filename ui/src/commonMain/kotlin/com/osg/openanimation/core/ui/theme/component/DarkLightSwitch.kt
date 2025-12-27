@@ -14,6 +14,7 @@ import com.osg.openanimation.core.ui.components.button.noRippleClickable
 import com.osg.openanimation.core.ui.components.loading.animationResource
 import com.osg.openanimation.core.ui.components.lottie.ClipSpecProgress
 import com.osg.openanimation.core.ui.components.lottie.lottieClippedAnimation
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun DarkLightSwitch(
@@ -30,7 +31,7 @@ fun DarkLightSwitch(
         var clipIdx by remember { mutableIntStateOf(if (isDarkMode) 0 else 1) }
         val painter = lottieClippedAnimation(
             animation,
-            listOf(
+            persistentListOf(
                 ClipSpecProgress(0f, 0.6f),
                 ClipSpecProgress(0.6f, 1f),
             ),

@@ -53,11 +53,12 @@ import com.osg.openanimation.core.ui.util.icons.Tag
 import com.osg.openanimation.core.ui.util.icons.Upload
 import com.osg.openanimation.core.ui.util.icons.brandingpack.LogoVector
 import com.osg.openanimation.core.ui.util.icons.githubVector
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun OpenNavSuiteScope.SearchAnimationBar(
     userSessionState: UserSessionState,
-    categories: List<SelectedQueryType>,
+    categories: ImmutableList<SelectedQueryType>,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     onSignOutClick: () -> Unit,
@@ -229,7 +230,7 @@ fun UploadButtonBar(
 @Composable
 fun SearchBar(
     onSearchItemSelected: (SelectedQueryType) -> Unit,
-    categories: List<SelectedQueryType>,
+    categories: ImmutableList<SelectedQueryType>,
     query: String = "",
     onQueryChange: (String) -> Unit = {},
     expanded: Boolean,

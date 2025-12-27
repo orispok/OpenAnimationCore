@@ -18,6 +18,8 @@ import com.osg.openanimation.core.ui.components.loading.animationResource
 import com.osg.openanimation.core.ui.components.lottie.LottieAnimationView
 import com.osg.openanimation.core.ui.di.domain.SignInProviderFactory
 import com.osg.openanimation.core.ui.di.domain.UserRepository
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.compose.koinInject
 
 @Composable
@@ -36,7 +38,7 @@ fun SignInReasoningDialog(
                 shape = RoundedCornerShape(16.dp),
             ) {
                 SignInReasoningContent(
-                    signInProviders = signInService.buildSignInProviders(),
+                    signInProviders = signInService.buildSignInProviders().toImmutableList(),
                     modifier = Modifier,
                     onRegistered = {
                         userRepository.onRegistered(it)
@@ -55,7 +57,7 @@ fun SignInReasoningDialogView(
     userRepository: UserRepository = koinInject()
 ){
     SignInReasoningContent(
-        signInProviders = signInService.buildSignInProviders(),
+        signInProviders = signInService.buildSignInProviders().toImmutableList(),
         modifier = modifier,
         onRegistered = userRepository::onRegistered
     )
@@ -64,7 +66,7 @@ fun SignInReasoningDialogView(
 
 @Composable
 fun SignInReasoningContent(
-    signInProviders: List<SignInProvider>,
+    signInProviders: ImmutableList<SignInProvider>,
     onRegistered: (Result<SignInResult>) -> Unit,
     modifier: Modifier = Modifier,
 ){

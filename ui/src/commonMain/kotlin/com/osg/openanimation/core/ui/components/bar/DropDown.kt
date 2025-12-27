@@ -6,8 +6,16 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -16,11 +24,12 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.osg.openanimation.core.ui.util.resource.string
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.StringResource
 
 @Composable
 fun DropDownAnimatingIcon(
-    dropDownOptions: List<GeneralIconButtonItem>,
+    dropDownOptions: ImmutableList<GeneralIconButtonItem>,
     modifier: Modifier = Modifier,
 ) {
     var isSelected by remember { mutableStateOf(false) }
@@ -58,7 +67,7 @@ fun DropDownAnimatingIcon(
 
 @Composable
 fun OptionsButton(
-    dropDownOptions: List<GeneralIconButtonItem>,
+    dropDownOptions: ImmutableList<GeneralIconButtonItem>,
     imageVector: ImageVector,
 ) {
     var clicked by remember { mutableStateOf(false) }
@@ -79,7 +88,7 @@ fun OptionsButton(
 
 @Composable
 fun DropDownMenu(
-    buttonContents: List<GeneralIconButtonItem>,
+    buttonContents: ImmutableList<GeneralIconButtonItem>,
     expanded: Boolean,
     onDismissRequest: () -> Unit
 ) {

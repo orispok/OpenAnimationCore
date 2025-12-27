@@ -31,6 +31,7 @@ import com.osg.openanimation.core.ui.dashboard.state.DashboardUiState
 import com.osg.openanimation.core.ui.dashboard.state.UploadedAnimationUiData
 import com.osg.openanimation.core.ui.util.adaptive.ScreenSizeClass
 import com.osg.openanimation.core.ui.util.adaptive.currentScreenWidthClass
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DashboardView(
@@ -90,7 +91,7 @@ fun DashboardView(
 @Composable
 fun UploadedCollectionView(
     modifier: Modifier = Modifier,
-    uploadedAnimations: List<UploadedAnimationUiData>,
+    uploadedAnimations: ImmutableList<UploadedAnimationUiData>,
     onAnimationClick: (String) -> Unit,
     onUploadNewAnimationButtonPress: () -> Unit,
 ) {

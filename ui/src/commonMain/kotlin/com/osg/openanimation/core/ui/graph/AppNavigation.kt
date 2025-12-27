@@ -19,6 +19,7 @@ import com.osg.openanimation.core.ui.components.bar.SearchAnimationBar
 import com.osg.openanimation.core.ui.di.domain.AnimationMetadataRepository
 import com.osg.openanimation.core.ui.di.domain.UserRepository
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.asFlow
 import org.koin.compose.koinInject
 
@@ -62,7 +63,7 @@ fun AppNavigation(
                     onNavigate = {
                         navController.navigate(it)
                     },
-                    categories = animationCatalogState.map(SelectedQueryType::Tag),
+                    categories = animationCatalogState.map(SelectedQueryType::Tag).toImmutableList(),
                     modifier = Modifier,
                     topAppBarScrollBehavior = scrollBehavior,
                     userSessionState = userSessionState,

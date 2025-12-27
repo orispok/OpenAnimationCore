@@ -17,6 +17,7 @@ import com.osg.openanimation.core.ui.di.domain.UserRepository
 import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import com.osg.openanimation.core.ui.home.domain.ColorPaletteWithMetadata
 import com.osg.openanimation.core.ui.home.model.toUiDataList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,7 +101,7 @@ class AnimationDetailsViewModel(
     ) { animationWithColorPalette, relatedAnimations ->
         AnimationAndRelated(
             animationUiData = animationWithColorPalette,
-            relatedAnimations = relatedAnimations
+            relatedAnimations = relatedAnimations.toImmutableList()
         )
     }
 

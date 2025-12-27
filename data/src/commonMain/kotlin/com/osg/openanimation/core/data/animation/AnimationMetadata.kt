@@ -1,8 +1,10 @@
 package com.osg.openanimation.core.data.animation
 
+import androidx.compose.runtime.Immutable
 import com.osg.openanimation.core.data.report.LicenseType
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class AnimationMetadata(
     val name: String,

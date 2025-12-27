@@ -12,10 +12,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.osg.openanimation.core.ui.components.signin.SignInReasoningDialog
 import com.osg.openanimation.core.ui.generated.resources.Res
+import com.osg.openanimation.core.ui.generated.resources.account
 import com.osg.openanimation.core.ui.generated.resources.dashboard
-import com.osg.openanimation.core.ui.generated.resources.*
+import com.osg.openanimation.core.ui.generated.resources.logout
 import com.osg.openanimation.core.ui.util.icons.Logout
 import com.osg.openanimation.core.ui.util.icons.Workspaces
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun UserProfileSignedInButton(
@@ -25,7 +27,7 @@ fun UserProfileSignedInButton(
 ){
     OptionsButton(
         imageVector = Icons.Filled.AccountCircle,
-        dropDownOptions = listOf(
+        dropDownOptions = persistentListOf(
             GeneralIconButtonItem(
                 stringResource = Res.string.account,
                 imageVector = Icons.Default.AccountCircle,

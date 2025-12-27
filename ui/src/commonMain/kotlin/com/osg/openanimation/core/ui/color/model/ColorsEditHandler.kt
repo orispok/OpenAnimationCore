@@ -4,6 +4,9 @@ import androidx.compose.ui.graphics.Color
 import com.osg.openanimation.core.ui.color.util.getKMostDifferentColors
 import com.osg.openanimation.core.ui.components.lottie.AnimationDataState
 import com.osg.openanimation.core.ui.di.domain.AnimationContentLoader
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,8 +23,8 @@ data class ProcessedJson(
 )
 
 data class OptionsWithColors(
-    val options: List<List<Color>>,
-    val nodes: List<PaintNode>
+    val options: ImmutableList<ImmutableList<Color>>,
+    val nodes: ImmutableList<PaintNode>
 )
 
 
@@ -85,12 +88,12 @@ class ColorsEditHandler(
         OptionsWithColors(
             options = if (colors.isNotEmpty()){
                 transformOptionsList.map { option ->
-                    option.transform(colors)
-                }
+                    option.transform(colors).toImmutableList()
+                }.toImmutableList()
             }else{
-                emptyList()
+                persistentListOf()
             },
-            nodes = colorNodes
+            nodes = colorNodes.toImmutableList()
         )
     }
 

@@ -3,15 +3,20 @@ package com.osg.openanimation.core.ui.components.signin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 
 
 @Composable
 fun SignInControllers(
     modifier: Modifier = Modifier,
-    signInProviders: List<SignInProvider>,
+    signInProviders: ImmutableList<SignInProvider>,
     onComplete: (Result<SignInResult>) -> Unit = {}
 ) {
 

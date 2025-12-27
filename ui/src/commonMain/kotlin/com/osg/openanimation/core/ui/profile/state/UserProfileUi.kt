@@ -1,8 +1,10 @@
 package com.osg.openanimation.core.ui.profile.state
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.ImageBitmap
 import com.osg.openanimation.core.data.use.UserRole
 
+@Immutable
 data class UserProfileUi(
     val displayName: String,
     val bio: String? = null,
@@ -15,5 +17,6 @@ data class UserProfileUi(
 sealed interface ProfileScreenState {
     data object Loading : ProfileScreenState
     data object SignedOut : ProfileScreenState
+    @Immutable
     data class Success(val userProfileUi: UserProfileUi) : ProfileScreenState
 }

@@ -11,6 +11,7 @@ import com.osg.openanimation.core.ui.graph.SelectedQueryType
 import com.osg.openanimation.core.ui.graph.SelectedQueryType.Tag
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates
 import com.osg.openanimation.core.ui.home.domain.ExploreScreenStates.Success
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -50,11 +51,11 @@ class AnimationViewModel(
                 val animations = animationMetaRepo.fetchBy(queryType, Int.MAX_VALUE)
                     .toUiDataList(animationContentLoader)
                 return Success(
-                    animations = animations,
+                    animations = animations.toImmutableList(),
                     selected = queryType,
                     categories = animationMetaRepo.fetchTags().map {
                         Tag(it)
-                    }
+                    }.toImmutableList()
                 )
             }
 
@@ -64,11 +65,11 @@ class AnimationViewModel(
                         .map { animationMetaRepo.fetchMetaByHash(it) }
                         .toUiDataList(animationContentLoader)
                     return Success(
-                        animations = animations,
+                        animations = animations.toImmutableList(),
                         selected = queryType,
                         categories = animationMetaRepo.fetchTags().map {
                             Tag(it)
-                        }
+                        }.toImmutableList()
                     )
                 } else {
                     ExploreScreenStates.RequiredLogin
