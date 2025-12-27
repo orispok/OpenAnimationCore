@@ -61,7 +61,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
-                implementation(libs.kotlinx.collections.immutable)
+                api(libs.kotlinx.collections.immutable)
                 api(libs.koin.annotations)
             }
         }
