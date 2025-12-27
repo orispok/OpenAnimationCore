@@ -18,9 +18,16 @@ kotlin {
         browser()
         binaries.executable()
     }
-    androidTarget {
+    androidLibrary {
+        namespace = "com.osg.openanimation.${project.name}"
+        compileSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        withJava()
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+        androidResources {
+            enable = true
         }
     }
     iosArm64()
@@ -76,19 +83,5 @@ dependencies {
 project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
     if(name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-
-
-android {
-    namespace = "com.osg.openanimation.${project.name}"
-    compileSdk = libs.versions.android.targetSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }

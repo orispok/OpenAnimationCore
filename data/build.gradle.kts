@@ -16,10 +16,16 @@ kotlin {
         nodejs()
         binaries.executable()
     }
-    androidTarget {
-        publishLibraryVariants("release", "debug")
+    androidLibrary {
+        namespace = "com.osg.openanimation.${project.name}"
+        compileSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        withJava()
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+        androidResources {
+            enable = true
         }
     }
     iosArm64()
@@ -35,18 +41,5 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.core)
         }
-    }
-}
-
-
-android {
-    namespace = "com.osg.openanimation.${project.name}"
-    compileSdk = libs.versions.android.targetSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }
