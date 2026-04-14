@@ -16,7 +16,7 @@ kotlin {
         nodejs()
         binaries.executable()
     }
-    androidLibrary {
+    android {
         namespace = "com.osg.openanimation.${project.name}"
         compileSdk = libs.versions.android.targetSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
