@@ -13,7 +13,7 @@ import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
 
 @org.koin.core.annotation.Module
-@ComponentScan("com.osg.openanimation.core.**")
+@ComponentScan
 @Configuration
 class SharedModule
 
