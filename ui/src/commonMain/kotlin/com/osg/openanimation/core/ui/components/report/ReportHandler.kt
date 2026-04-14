@@ -11,7 +11,7 @@ import com.osg.openanimation.core.ui.di.domain.UserSessionState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.KoinViewModel
 import org.koin.core.annotation.Provided
 
 enum class FailedReason{

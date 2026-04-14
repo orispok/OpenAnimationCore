@@ -8,15 +8,13 @@ import com.osg.openanimation.core.ui.preload.PreLoadFallback
 import com.osg.openanimation.core.ui.preload.fadeOutElement
 
 @OptIn(ExperimentalBrowserHistoryApi::class, ExperimentalComposeUiApi::class)
-fun webApp(
-    baseApp: BaseApp
-) {
+fun webApp() {
     ComposeViewport(
         viewportContainerId = "ComposeTarget",
         content = {
             PreLoadFallback{
                 fadeOutElement()
-                baseApp.AppEntry {
+                AppEntry {
                     it.bindToBrowserNavigation()
                 }
             }
