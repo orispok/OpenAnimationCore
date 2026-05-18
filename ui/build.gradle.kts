@@ -38,7 +38,7 @@ kotlin {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(projects.core.data)
-                implementation(projects.compottie.compottieLite)
+                implementation(libs.compottie.lite)
 
                 implementation(libs.runtime)
                 implementation(libs.foundation)
